@@ -1,108 +1,84 @@
---create database Com2900G08
+create database Com2900G08
+go
 
 use Com2900G08
-
-create schema transacciones
+go
 
 create schema supermrkt
-
-create table supermrkt.sucursal
-(
-  ciudad char(20),
-  direccion char(100),
-  horario char(20),
-  telefono char(9),
-  primary key (ciudad, direccion)
- )
+go
 
 
- create table supermrkt.empleado
-(
-  id_Empleado int identity (257020, 1) primary key,
-  dni_Empleado int,
-  cuil_Empleado int,
-  nombre char(50),
-  apellido char(50),
-  direccion char(100),
-  mail_personal char(70),
-  mail_empresa char(70),
-  cargo char(20),
-  turno char(20),
-  sucursalEmpleado char(20),
-  direccionSucursal char(100),
-  foreign key (sucursalEmpleado, direccionSucursal) references supermrkt.sucursal (ciudad, direccion)
-)
-
-create table transacciones.metodo_De_Pago
-(
-	id int primary key,
-	descripcion char(25)
-)
-
-create table supermrkt.linea_De_Producto
-(
-	id int primary key,
-	descripcion char(25)
-)
-
-create table supermrkt.Producto
-(
-	id int primary key,
-	nombre_Producto char(80),
-	categoria char(70),
-	precio_Producto decimal(8,2)
-)
-
---drop table supermrkt.electronicaCSV
-create table supermrkt.electronicaCSV
-(
-	id int primary key,
-	nombre_producto char(200),
-	precio_Unitario_usd char(200) 
-)
-
-select * from supermrkt.electronicaCSV
 
 --EXEC sp_enum_oledb_providers; COmando para verificar si teniamos instalado el controlador Microsoft
+	EXEC sp_configure 'show advanced options', 1;
+	RECONFIGURE;
 
-EXEC sp_configure 'show advanced options', 1;
-RECONFIGURE;
+	EXEC sp_configure 'Ad Hoc Distributed Queries', 1;
+	RECONFIGURE;
 
-EXEC sp_configure 'Ad Hoc Distributed Queries', 1;
-RECONFIGURE;
+	EXEC sp_MSSet_oledb_prop N'Microsoft.ACE.OLEDB.16.0', N'AllowInProcess', 1
+	GO
 
-SELECT *
-INTO supermrkt.electronicaCSV -- Cambia a tu tabla o usa una tabla temporal
-FROM OPENROWSET('Microsoft.ACE.OLEDB.16.0',
-    'Excel 12.0;Database=C:\Users\Matias\OneDrive\Escritorio\UNLAM\2do Cuatri 2024\Bases de Datos Aplicada\TP_integrador_Archivos\TP_integrador_Archivos\Productos\Electronic accessories.xlsx;HDR=YES',
+	EXEC sp_MSSet_oledb_prop N'Microsoft.ACE.OLEDB.16.0', N'DynamicParameters', 1
+	GO
+
+	print('linea 24')
+	go
+
+CREATE OR ALTER PROCEDURE supermrkt.importar_Electronic_Accesories
+as
+begin
+	drop table if exists supermrkt.electronicaEXCEL
+
+	SELECT *
+	INTO supermrkt.electronicaEXCEL -- Cambia a tu tabla o usa una tabla temporal
+	FROM OPENROWSET('Microsoft.ACE.OLEDB.16.0',
+		'Excel 12.0;Database=C:\Users\felid\Downloads\TP_integrador_Archivos (1)\TP_integrador_Archivos\Productos\Electronic accessories.xlsx;HDR=YES',
     'SELECT * FROM [Sheet1$]')
 
-EXEC sp_MSSet_oledb_prop N'Microsoft.ACE.OLEDB.12.0', N'AllowInProcess', 1
-GO
+	drop table if exists supermrkt.accesorios_electronicos
+	create table supermrkt.accesorios_electronicos
+	(
+	id int primary key identity(1,1),
+	nombre_producto char(60),
+	precio_Unitario_usd decimal(8,2) 
+	)
 
-EXEC sp_MSSet_oledb_prop N'Microsoft.ACE.OLEDB.12.0', N'DynamicParameters', 1
-GO
+	insert into supermrkt.accesorios_electronicos (nombre_producto, precio_unitario_usd)
+	select
+	cast([Product] as char(60)) as nombre_producto,
+	cast([Precio Unitario en dolares] as decimal (8,2)) as precio_unitario_usd
+	from supermrkt.electronicaEXCEL
+	drop table supermrkt.electronicaEXCEL
 
-create table supermrkt.importadosCSV
-(
-	id int primary key,
-	nombre_producto char(40),
-	nombre_proveedor char(100),
-	categoria char(50),
-	cant_X_Unidad char(30),
-	precio_Unitario decimal(6, 2)
-)
+END
+
+print('linea 54')
+go
+
+exec supermrkt.importar_Electronic_Accesories
+select * from supermrkt.accesorios_electronicos
+
+
+	EXEC sp_MSSet_oledb_prop N'Microsoft.ACE.OLEDB.16.0', N'AllowInProcess', 0
+	GO
+
+	EXEC sp_MSSet_oledb_prop N'Microsoft.ACE.OLEDB.16.0', N'DynamicParameters', 0
+	GO
+
+	EXEC sp_configure 'Ad Hoc Distributed Queries', 0;
+	RECONFIGURE;
+	go
 
 --Store procedure para insertar datos de catalogo.CSV
-
 create or alter procedure supermrkt.importar_CatalogoCSV
 as
 begin
 	 --Creamos tabla temporal para cargar catalogo
 	
-	drop table if exists supermrkt.##catalogoCSV
+	drop table if exists supermrkt.catalogoCSV
 
-	create table supermrkt.##catalogoCSV
+	create table supermrkt.catalogoCSV
 	(
 		id int primary key,
 		category char(200), --poner 255 si falla
@@ -114,8 +90,8 @@ begin
 	)
 
 	--Importamos catalogo
-	BULK INSERT supermrkt.##catalogoCSV
-	FROM 'C:\Users\Matias\OneDrive\Escritorio\UNLAM\2do Cuatri 2024\Bases de Datos Aplicada\TP_integrador_Archivos\TP_integrador_Archivos\Productos\catalogo.csv'
+	BULK INSERT supermrkt.catalogoCSV
+	FROM 'C:\Users\felid\Downloads\TP_integrador_Archivos (1)\TP_integrador_Archivos\Productos\catalogo.csv'
 	WITH 
 	(
 		FORMAT = 'CSV',
@@ -125,12 +101,12 @@ begin
 		FIRSTROW = 2
 	)
 
-	UPDATE supermrkt.##catalogoCSV 
-	SET name = REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(name, 'Â', 'á'), 'Ã¡', 'á'), 'Ã³', 'ó'), 'Ãº', 'ú'), 'Ã©', 'é'), 'Ã', 'í'), 'í±', 'ñ'), 'í³', 'ó'), 'í', 'í'), 'í©', 'é'), 'í³', 'ó'), 'í-', 'í')
+	UPDATE supermrkt.catalogoCSV 
+	SET name = REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(name, ' ', ' '), 'Ã¡', ' '), 'Ã³', ' '), 'Ãº', ' '), 'Ã©', ' '), ' ', ' '), ' ', ' '), ' ', ' '), ' ', ' '), ' ', ' '), ' ', ' '), ' -', ' ')
 
-	drop table if exists supermrkt.catalogoCSV
+	drop table if exists supermrkt.catalogoCSVImportado
 
-	CREATE TABLE supermrkt.catalogoCSV
+	CREATE TABLE supermrkt.catalogoCSVImportado
 	(
     id INT PRIMARY KEY,
     categoria CHAR(80),
@@ -141,7 +117,7 @@ begin
     date DATETIME
 	)
 
-	INSERT INTO supermrkt.catalogoCSV (id, categoria, name, price, reference_price, reference_unit, date)
+	INSERT INTO supermrkt.catalogoCSVImportado (id, categoria, name, price, reference_price, reference_unit, date)
     SELECT 
         id,
         CAST(category AS CHAR(80)) AS categoria,
@@ -151,26 +127,15 @@ begin
         CAST(reference_unit AS CHAR(5)) AS reference_unit,
         TRY_CAST(date AS DATETIME) AS date
     FROM 
-        supermrkt.##catalogoCSV;
+        supermrkt.catalogoCSV;
 
-	drop table supermrkt.##catalogoCSV
+	drop table supermrkt.catalogoCSV
 
-	select  * from supermrkt.catalogoCSV
+	select  * from supermrkt.catalogoCSVImportado
 
 end
 
-drop table supermrkt.##catalogoCSV
-drop table supermrkt.catalogoCSV
-
 exec supermrkt.importar_CatalogoCSV
+go
 
-
-SELECT *
-FROM supermrkt.catalogoCSV
-WHERE name COLLATE Latin1_General_BIN LIKE '%[^A-Za-z0-9 ]%'
-                                                                                                                                                                                               
---Tablas a crear:
---venta
---detalle de venta
-
-
+--drop database Com2900G08
