@@ -1,0 +1,42 @@
+Documentación DBA
+
+Descripción del proyecto:
+•	Este proyecto tiene como objetivo el desarrollo de un sistema de base de datos para un supermercado minorista, diseñado como parte de un trabajo de la asignatura de Base de Datos Aplicada de la Universidad Nacional de La Matanza (UNLaM). El sistema incluye el diseño y la implementación de diversas tablas y procedimientos almacenados para gestionar productos, ventas, empleados y sucursales.
+
+Objetivo del Proyecto:
+El sistema de base de datos tiene como propósito administrar la información de un supermercado minorista, incluyendo las siguientes funcionalidades:
+•	Gestión de productos, empleados y sucursales.
+•	Registro de ventas y detalles de ventas.
+•	Catálogo de productos con tipos de productos organizados en diferentes categorías.
+•	Generación de reportes en formato XML sobre ventas mensuales, trimestrales y por rangos de fechas.
+
+Motor instalado: 
+•	SQL Server
+
+Versión: 
+•	Microsoft SQL Server 2022 (RTM) 
+
+Entorno en el que se instaló:
+•	Procesador: Intel(R) Core(TM) i5-10400F CPU @ 2.90GHz   2.90 GHz
+•	RAM: 16GB
+•	Sistema Operativo: Windows 11 Pro
+
+Ubicación de archivos:
+•	Data: C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\
+•	Log: C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\
+•	Backup: C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\Backu
+
+Memoria asignada:
+•	Mínima: 2048 MB (2GB)
+•	Máxima: 12288 MB (12GB)
+
+Seguridad:
+•	Windows Authentication Mode
+
+Puertos:
+•	Puerto TCP asignado: 1433
+
+Instalación OLE DB
+•	Para configurar la importación de archivos .xlsx en SQL Server, primero se descargó e instaló el Microsoft OLE DB Driver for SQL Server desde el sitio oficial de Microsoft, seleccionando la versión adecuada para el sistema operativo y versión de SQL Server.
+•	Tras la instalación, se otorgaron permisos de lectura a la cuenta de servicio de SQL Server en la carpeta de los archivos .xlsx.
+•	Luego, se habilitó la opción de Ad Hoc Distributed Queries ejecutando comandos en SQL Server Management Studio, lo que permite el acceso directo a archivos externos.
