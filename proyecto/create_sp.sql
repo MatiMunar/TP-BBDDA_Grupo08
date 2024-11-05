@@ -1,9 +1,9 @@
 use Com2900G08
 GO
 
-DROP PROCEDURE IF EXISTS insertar.datos_catalogo;
+DROP PROCEDURE IF EXISTS supermarket.insertar_datos_catalogo;
 GO
-CREATE PROCEDURE insertar.datos_catalogo
+CREATE PROCEDURE supermarket.insertar_datos_catalogo
 AS
 BEGIN
     -- Creamos la tabla temporal
@@ -16,11 +16,12 @@ BEGIN
         reference_unit NVARCHAR(50),
         date DATETIME
     );
+    
     BULK INSERT #temp_catalogo
-    FROM 'C:\Users\felid\OneDrive\Escritorio\UNLAM\Base de datos Aplicada\TP_integrador_Archivos (1)\TP_integrador_Archivos\Productos\catalogo.csv'
+    FROM 'C:\Users\ivanr\Desktop\TP_integrador_Archivos\Productos\catalogo.csv'
     WITH (
-		CHECK_CONSTRAINTS,
-		FORMAT = 'CSV',
+        CHECK_CONSTRAINTS,
+        FORMAT = 'CSV',
         FIELDTERMINATOR = ',',      
         ROWTERMINATOR = '0x0a',     
         FIRSTROW = 2,               
@@ -28,12 +29,18 @@ BEGIN
     );
 
     -- Insertar los datos en la tabla producto con conversión condicional
-    INSERT INTO Com2900G08.creacion.producto (nombre_producto, precio, categoria)
+    INSERT INTO Com2900G08.supermarket.producto (nombre_producto, precio, categoria)
     SELECT 
         name,
         TRY_CAST(price AS DECIMAL(8,2)) AS price, -- Convierte a DECIMAL, o NULL si no es posible
         category
-    FROM #temp_catalogo;
+    FROM #temp_catalogo t
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM Com2900G08.supermarket.producto p
+        WHERE p.nombre_producto = t.name
+          AND p.categoria = t.category
+    );
 
     -- Limpiar la tabla temporal
     DROP TABLE #temp_catalogo;
@@ -58,7 +65,7 @@ BEGIN
     SELECT Product, [Precio Unitario en dolares]
     FROM OPENROWSET(
         'Microsoft.ACE.OLEDB.16.0', 
-        'Excel 12.0;HDR=YES;Database=C:\Users\felid\OneDrive\Escritorio\UNLAM\Base de datos Aplicada\TP_integrador_Archivos (1)\TP_integrador_Archivos\Productos\Electronic accessories.xlsx', 
+        'Excel 12.0;HDR=YES;Database=C:\Users\ivanr\Desktop\TP_integrador_Archivos\Productos\Electronic accessories.xlsx', 
         'SELECT * FROM [Sheet1$]'
     );
 
@@ -67,7 +74,13 @@ BEGIN
         Product,
         TRY_CAST(REPLACE([Precio Unitario en dolares], ',', '.') AS DECIMAL(8,2)) AS Price,  -- Convierte a DECIMAL, cambiando la coma por punto
         'Electronic accessories'
-    FROM #temp_electronic_accessories;
+    FROM #temp_electronic_accessories t
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM Com2900G08.creacion.producto p
+        WHERE p.nombre_producto = t.Product
+          AND p.categoria = 'Electronic accessories'
+    );
 
     DROP TABLE #temp_electronic_accessories;
 
@@ -95,7 +108,7 @@ BEGIN
     SELECT IdProducto, NombreProducto, Proveedor, Categoría, CantidadPorUnidad, PrecioUnidad
     FROM OPENROWSET(
         'Microsoft.ACE.OLEDB.16.0', 
-        'Excel 12.0;HDR=YES;Database=C:\Users\felid\OneDrive\Escritorio\UNLAM\Base de datos Aplicada\TP_integrador_Archivos (1)\TP_integrador_Archivos\Productos\Productos_importados.xlsx', 
+        'Excel 12.0;HDR=YES;Database=C:\Users\ivanr\Desktop\TP_integrador_Archivos\Productos\Productos_importados.xlsx', 
         'SELECT * FROM [Listado de Productos$]'
     );
 
@@ -104,7 +117,13 @@ BEGIN
         NombreProducto,
         TRY_CAST(REPLACE(PrecioUnidad, ',', '.') AS DECIMAL(10,2)) AS Precio,  -- Convierte a DECIMAL reemplazando coma por punto
         Categoría
-    FROM #temp_productos_importados;
+    FROM #temp_productos_importados t
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM Com2900G08.creacion.producto p
+        WHERE p.nombre_producto = t.NombreProducto
+          AND p.categoria = t.Categoría
+    );
 
     DROP TABLE #temp_productos_importados;
 
@@ -134,15 +153,21 @@ BEGIN
         SELECT Ciudad, [Reemplazar Por], Direccion, Horario, Telefono
         FROM OPENROWSET(
             'Microsoft.ACE.OLEDB.16.0',
-            'Excel 12.0;HDR=YES;Database=C:\Users\felid\OneDrive\Escritorio\UNLAM\Base de datos Aplicada\TP_integrador_Archivos (1)\TP_integrador_Archivos\Informacion_complementaria.xlsx',
+            'Excel 12.0;HDR=YES;Database=C:\Users\ivanr\Desktop\TP_integrador_Archivos\Informacion_complementaria.xlsx',
             'SELECT * FROM [sucursal$]'
         );
 
+        -- Insertar datos en la tabla sucursal evitando duplicados
         INSERT INTO Com2900G08.creacion.sucursal (nombre, ciudad)
         SELECT 
             ReemplazarPor, 
             Ciudad
-        FROM #temp_sucursal;
+        FROM #temp_sucursal ts
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM Com2900G08.creacion.sucursal s
+            WHERE s.nombre = ts.ReemplazarPor AND s.ciudad = ts.Ciudad
+        );
 
         -- Crear tabla temporal para empleados
         CREATE TABLE #temp_empleado (
@@ -164,18 +189,23 @@ BEGIN
         SELECT [Legajo/ID], [Nombre], [Apellido], [DNI], [Direccion], [Email Personal], [Email Empresa], [CUIL], [Cargo], [Sucursal], [Turno]
         FROM OPENROWSET(
             'Microsoft.ACE.OLEDB.16.0',
-            'Excel 12.0;HDR=YES;Database=C:\Users\felid\OneDrive\Escritorio\UNLAM\Base de datos Aplicada\TP_integrador_Archivos (1)\TP_integrador_Archivos\Informacion_complementaria.xlsx',
+            'Excel 12.0;HDR=YES;Database=C:\Users\ivanr\Desktop\TP_integrador_Archivos\Informacion_complementaria.xlsx',
             'SELECT * FROM [Empleados$]'
         );
 
-        -- Insertar datos en la tabla empleado
+        -- Insertar datos en la tabla empleado evitando duplicados
         INSERT INTO Com2900G08.creacion.empleado (nombre, legajo, id_sucursal)
         SELECT 
             CONCAT(e.Nombre, ' ', e.Apellido),  -- Concatenar Nombre y Apellido
             e.LegajoID,                         
             s.id_sucursal  
         FROM #temp_empleado e
-        JOIN Com2900G08.creacion.sucursal s ON e.Sucursal = s.nombre
+        INNER JOIN Com2900G08.creacion.sucursal s ON e.Sucursal = s.nombre
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM Com2900G08.creacion.empleado emp
+            WHERE emp.legajo = e.LegajoID
+        );
 
         -- Crear tabla temporal para clasificacion de productos
         CREATE TABLE #temp_clasificacion_producto (
@@ -187,16 +217,22 @@ BEGIN
         SELECT [Línea de producto], Producto
         FROM OPENROWSET(
             'Microsoft.ACE.OLEDB.16.0',
-            'Excel 12.0;HDR=YES;Database=C:\Users\felid\OneDrive\Escritorio\UNLAM\Base de datos Aplicada\TP_integrador_Archivos (1)\TP_integrador_Archivos\Informacion_complementaria.xlsx',
+            'Excel 12.0;HDR=YES;Database=C:\Users\ivanr\Desktop\TP_integrador_Archivos\Informacion_complementaria.xlsx',
             'SELECT * FROM [Clasificacion productos$]'
         );
 
+        -- Insertar datos en la tabla catalogo_producto evitando duplicados
         INSERT INTO Com2900G08.creacion.catalogo_producto (id_producto, tipo_catalogo)
         SELECT 
             p.id_producto,
             cp.Producto  
         FROM #temp_clasificacion_producto cp
-        JOIN Com2900G08.creacion.producto p ON cp.Producto = p.categoria;
+        INNER JOIN Com2900G08.creacion.producto p ON cp.Producto = p.categoria
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM Com2900G08.creacion.catalogo_producto c
+            WHERE c.id_producto = p.id_producto AND c.tipo_catalogo = cp.Producto
+        );
 
         DROP TABLE #temp_sucursal;
         DROP TABLE #temp_empleado;
@@ -239,7 +275,7 @@ BEGIN
 
         -- Cargar datos desde el archivo CSV
         BULK INSERT #temp_ventas
-        FROM 'C:\Users\felid\OneDrive\Escritorio\UNLAM\Base de datos Aplicada\TP_integrador_Archivos (1)\TP_integrador_Archivos\Ventas_registradas.csv'
+        FROM 'C:\Users\ivanr\Desktop\TP_integrador_Archivos\Ventas_registradas.csv'
         WITH (
             CHECK_CONSTRAINTS,
             FORMAT = 'CSV',
@@ -249,6 +285,7 @@ BEGIN
             CODEPAGE = '65001'
         );
 
+        -- Insertar datos en la tabla venta evitando duplicados
         INSERT INTO Com2900G08.creacion.venta (id_factura, tipo_factura, fecha, hora, medio_pago, id_empleado, id_sucursal)
         SELECT 
             ID_Factura,
@@ -258,7 +295,12 @@ BEGIN
             Medio_de_Pago,
             (SELECT TOP 1 id_empleado FROM Com2900G08.creacion.empleado WHERE legajo = Empleado),  -- Relacionar con el empleado
             (SELECT TOP 1 id_sucursal FROM Com2900G08.creacion.sucursal WHERE ciudad = Ciudad)  -- Relacionar con la sucursal
-        FROM #temp_ventas;
+        FROM #temp_ventas tv
+        WHERE NOT EXISTS (
+            SELECT 1 
+            FROM Com2900G08.creacion.venta v
+            WHERE v.id_factura = tv.ID_Factura
+        );
 
         -- Crear tabla temporal para almacenar detalles de venta
         CREATE TABLE #temp_detalle_venta (
@@ -268,6 +310,7 @@ BEGIN
             precio_unitario DECIMAL(10, 2)
         );
 
+        -- Insertar datos en la tabla detalle_venta evitando duplicados
         INSERT INTO #temp_detalle_venta (id_venta, id_producto, cantidad, precio_unitario)
         SELECT 
             v.id_venta,
@@ -275,8 +318,13 @@ BEGIN
             t.Cantidad,
             t.Precio_Unitario
         FROM #temp_ventas t
-        JOIN Com2900G08.creacion.venta v ON t.ID_Factura = v.id_factura
-        JOIN Com2900G08.creacion.producto p ON t.Producto = p.nombre_producto; 
+        INNER JOIN Com2900G08.creacion.venta v ON t.ID_Factura = v.id_factura
+        INNER JOIN Com2900G08.creacion.producto p ON t.Producto = p.nombre_producto
+        WHERE NOT EXISTS (
+            SELECT 1 
+            FROM Com2900G08.creacion.detalle_venta dv
+            WHERE dv.id_venta = v.id_venta AND dv.id_producto = p.id_producto
+        );
 
         INSERT INTO Com2900G08.creacion.detalle_venta (id_venta, id_producto, cantidad, precio_unitario)
         SELECT id_venta, id_producto, cantidad, precio_unitario FROM #temp_detalle_venta;
