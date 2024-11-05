@@ -1,9 +1,6 @@
 use Com2900G08
 GO
 
-create schema insertar
-go
-
 DROP PROCEDURE IF EXISTS insertar.datos_catalogo;
 GO
 CREATE PROCEDURE insertar.datos_catalogo
@@ -30,7 +27,7 @@ BEGIN
         CODEPAGE = '65001'       -- Cambiado a UTF-16 LE
     );
 
-    -- Insertar los datos en la tabla producto con conversión condicional
+    -- Insertar los datos en la tabla producto con conversiÃ³n condicional
     INSERT INTO Com2900G08.creacion.producto (nombre_producto, precio, categoria)
     SELECT 
         name,
@@ -88,14 +85,14 @@ BEGIN
         IdProducto NVARCHAR(50),
         NombreProducto NVARCHAR(150),
         Proveedor NVARCHAR(150),
-        Categoría NVARCHAR(100),
+        CategorÃ­a NVARCHAR(100),
         CantidadPorUnidad NVARCHAR(100),
         PrecioUnidad NVARCHAR(50)   -- NVARCHAR para manejar cualquier formato
     );
 
     -- Cargar los datos desde el archivo Excel a la tabla temporal
-    INSERT INTO #temp_productos_importados (IdProducto, NombreProducto, Proveedor, Categoría, CantidadPorUnidad, PrecioUnidad)
-    SELECT IdProducto, NombreProducto, Proveedor, Categoría, CantidadPorUnidad, PrecioUnidad
+    INSERT INTO #temp_productos_importados (IdProducto, NombreProducto, Proveedor, CategorÃ­a, CantidadPorUnidad, PrecioUnidad)
+    SELECT IdProducto, NombreProducto, Proveedor, CategorÃ­a, CantidadPorUnidad, PrecioUnidad
     FROM OPENROWSET(
         'Microsoft.ACE.OLEDB.16.0', 
         'Excel 12.0;HDR=YES;Database=C:\Users\felid\OneDrive\Escritorio\UNLAM\Base de datos Aplicada\TP_integrador_Archivos (1)\TP_integrador_Archivos\Productos\Productos_importados.xlsx', 
@@ -106,7 +103,7 @@ BEGIN
     SELECT 
         NombreProducto,
         TRY_CAST(REPLACE(PrecioUnidad, ',', '.') AS DECIMAL(10,2)) AS Precio,  -- Convierte a DECIMAL reemplazando coma por punto
-        Categoría
+        CategorÃ­a
     FROM #temp_productos_importados;
 
     DROP TABLE #temp_productos_importados;
@@ -187,7 +184,7 @@ BEGIN
         );
 
         INSERT INTO #temp_clasificacion_producto (LineaDeProducto, Producto)
-        SELECT [Línea de producto], Producto
+        SELECT [LÃ­nea de producto], Producto
         FROM OPENROWSET(
             'Microsoft.ACE.OLEDB.16.0',
             'Excel 12.0;HDR=YES;Database=C:\Users\felid\OneDrive\Escritorio\UNLAM\Base de datos Aplicada\TP_integrador_Archivos (1)\TP_integrador_Archivos\Informacion_complementaria.xlsx',
@@ -205,11 +202,11 @@ BEGIN
         DROP TABLE #temp_empleado;
         DROP TABLE #temp_clasificacion_producto;
 
-        COMMIT TRANSACTION;  -- Confirmar la transacción
+        COMMIT TRANSACTION;  -- Confirmar la transacciÃ³n
         PRINT 'Datos cargados correctamente.';
     END TRY
     BEGIN CATCH
-        ROLLBACK TRANSACTION;  -- Revertir la transacción en caso de error
+        ROLLBACK TRANSACTION;  -- Revertir la transacciÃ³n en caso de error
         PRINT 'Error al cargar los datos: ' + ERROR_MESSAGE();
     END CATCH
 END;
@@ -291,7 +288,7 @@ BEGIN
         PRINT 'Datos de ventas cargados correctamente.';
     END TRY
     BEGIN CATCH
-        ROLLBACK TRANSACTION;  -- Revertir la transacción en caso de error
+        ROLLBACK TRANSACTION;  -- Revertir la transacciÃ³n en caso de error
         PRINT 'Error al cargar los datos: ' + ERROR_MESSAGE();
     END CATCH
 END;
