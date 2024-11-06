@@ -272,6 +272,7 @@ END;
 GO
 
 DROP PROCEDURE IF EXISTS insertar.ventas_registradas;
+	@rutaArchivo NVARCHAR(255)
 GO
 CREATE PROCEDURE insertar.ventas_registradas
 AS
