@@ -4,7 +4,7 @@ GO
 -- Tabla sucursal
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'sucursal' AND schema_id = SCHEMA_ID('creacion'))
 BEGIN
-    CREATE TABLE Com2900G08.creacion.sucursal (
+    CREATE TABLE creacion.sucursal (
         id_sucursal INT PRIMARY KEY IDENTITY(1,1),
         nombre VARCHAR(100) NOT NULL,
         ciudad VARCHAR(100) NOT NULL
@@ -17,7 +17,7 @@ GO
 -- Tabla empleado
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'empleado' AND schema_id = SCHEMA_ID('creacion'))
 BEGIN
-    CREATE TABLE Com2900G08.creacion.empleado (
+    CREATE TABLE creacion.empleado (
         id_empleado INT PRIMARY KEY IDENTITY(1,1),
         nombre VARCHAR(100) NOT NULL,
         legajo NVARCHAR(50) NOT NULL UNIQUE,
@@ -29,10 +29,23 @@ ELSE
 	PRINT('Ya existe la tabla "empleado"')
 GO
 
+-- Tabla catalogo_producto
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'catalogo_producto' AND schema_id = SCHEMA_ID('creacion'))
+BEGIN
+    CREATE TABLE creacion.catalogo_producto (
+        id_catalogo_producto INT PRIMARY KEY IDENTITY(1,1),
+        tipo_catalogo VARCHAR(50),
+    );
+END
+ELSE
+	PRINT('Ya existe la tabla "catalogo_producto"')
+GO
+--DROP TABLE creacion.catalogo_producto
+
 -- Tabla producto
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'producto' AND schema_id = SCHEMA_ID('creacion'))
 BEGIN
-    CREATE TABLE Com2900G08.creacion.producto (
+    CREATE TABLE creacion.producto (
         id_producto INT PRIMARY KEY IDENTITY(1,1),
         nombre_producto VARCHAR(150) NOT NULL,
         precio DECIMAL(10, 2) NOT NULL,
@@ -42,25 +55,13 @@ END
 ELSE
 	PRINT('Ya existe la tabla "producto"')
 GO
+--DROP TABLE creacion.producto
 
--- Tabla catalogo_producto
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'catalogo_producto' AND schema_id = SCHEMA_ID('creacion'))
-BEGIN
-    CREATE TABLE Com2900G08.creacion.catalogo_producto (
-        id_catalogo_producto INT PRIMARY KEY IDENTITY(1,1),
-        id_producto INT,
-        tipo_catalogo VARCHAR(50),
-        FOREIGN KEY (id_producto) REFERENCES Com2900G08.creacion.producto(id_producto)
-    );
-END
-ELSE
-	PRINT('Ya existe la tabla "catalogo_producto"')
-GO
 
 -- Tabla venta
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'venta' AND schema_id = SCHEMA_ID('creacion'))
 BEGIN
-    CREATE TABLE Com2900G08.creacion.venta (
+    CREATE TABLE creacion.venta (
         id_venta INT PRIMARY KEY IDENTITY(1,1),
         tipo_factura VARCHAR(50),
         fecha DATE NOT NULL,
@@ -80,7 +81,7 @@ GO
 -- Tabla detalle_venta
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'detalle_venta' AND schema_id = SCHEMA_ID('creacion'))
 BEGIN
-    CREATE TABLE Com2900G08.creacion.detalle_venta (
+    CREATE TABLE creacion.detalle_venta (
         id_detalle_venta INT PRIMARY KEY IDENTITY(1,1),
         id_venta INT,
         id_producto INT,
@@ -93,3 +94,4 @@ END
 ELSE
 	PRINT('Ya existe la tabla "detalle_venta"')
 GO
+--DROP TABLE creacion.detalle_venta

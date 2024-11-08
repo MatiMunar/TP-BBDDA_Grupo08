@@ -17,6 +17,14 @@ ELSE
 	PRINT('Ya existe el esquema "insertar"')
 GO
 
+IF NOT EXISTS (SELECT name FROM sys.schemas WHERE name = 'abm_catalogo_producto')
+BEGIN
+    EXEC('CREATE SCHEMA abm_catalogo_producto');
+END
+ELSE
+	PRINT('Ya existe el esquema "abm_catalogo_producto"')
+GO
+
 IF NOT EXISTS (SELECT name FROM sys.schemas WHERE name = 'abm_detalle_venta')
 BEGIN
     EXEC('CREATE SCHEMA abm_detalle_venta');
