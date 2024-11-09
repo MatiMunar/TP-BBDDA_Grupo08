@@ -22,8 +22,15 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'empleado' AND schema_id = 
 BEGIN
     CREATE TABLE creacion.empleado (
         id_empleado INT PRIMARY KEY IDENTITY(1,1),
+		legajo INT NOT NULL UNIQUE,
         nombre VARCHAR(100) NOT NULL,
-        legajo NVARCHAR(50) NOT NULL UNIQUE,
+        dni INT NOT NULL UNIQUE,
+		direccion VARCHAR(150) NOT NULL,
+		email_personal VARCHAR(100) NOT NULL,
+		email_empresa VARCHAR(100) NOT NULL,
+		cargo VARCHAR(50) NOT NULL,
+		sucursal VARCHAR(100) NOT NULL,
+		turno VARCHAR(50) NOT NULL,
         id_sucursal INT,
         FOREIGN KEY (id_sucursal) REFERENCES Com2900G08.creacion.sucursal(id_sucursal)
     );

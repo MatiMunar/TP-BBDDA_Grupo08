@@ -192,11 +192,11 @@ BEGIN
 
         -- Crear tabla temporal para empleados
         CREATE TABLE #temp_empleado (
-            LegajoID VARCHAR(50),
+            LegajoID INT,
             Nombre VARCHAR(100),
             Apellido VARCHAR(100),
-            DNI VARCHAR(20),
-            Direccion NVARCHAR(250),
+            DNI INT,
+            Direccion NVARCHAR(150),
             EmailPersonal NVARCHAR(100),
             EmailEmpresa NVARCHAR(100),
             CUIL VARCHAR(50),
@@ -216,19 +216,28 @@ BEGIN
         )';
         EXEC sp_executesql @sql;
 
-        -- Insertar datos en la tabla empleado evitando duplicados
-        INSERT INTO creacion.empleado (nombre, legajo, id_sucursal)
-        SELECT 
-            CONCAT(e.Nombre, ' ', e.Apellido),  -- Concatenar Nombre y Apellido
-            e.LegajoID,                         
-            s.id_sucursal  
-        FROM #temp_empleado e
-        INNER JOIN creacion.sucursal s ON e.Sucursal = s.ciudad
-        WHERE NOT EXISTS (
-            SELECT 1
-            FROM creacion.empleado emp
-            WHERE emp.legajo = e.LegajoID
-        );
+		INSERT INTO creacion.empleado (legajo, nombre, dni, direccion, email_personal, email_empresa, cargo, sucursal, turno, id_sucursal)
+		SELECT
+			e.legajoID,
+			CONCAT(e.Nombre, ' ', e.Apellido),
+			e.DNI,
+			e.Direccion,
+			REPLACE(REPLACE(e.EmailPersonal,' ', ''),CHAR(9),'') AS EmailPersonal,
+			REPLACE(REPLACE(e.EmailEmpresa,' ', ''),CHAR(9),'') AS EmailEmpresa, 
+			e.Cargo,
+			e.Sucursal,
+			e.Turno,
+			s.id_sucursal  
+		FROM #temp_empleado e
+		INNER JOIN creacion.sucursal s ON e.Sucursal = s.ciudad
+		WHERE NOT EXISTS (
+			SELECT 1
+			FROM creacion.empleado emp
+			WHERE emp.legajo = e.LegajoID
+		)
+		AND TRY_CAST(e.LegajoID AS int) IS NOT NULL
+		AND TRY_CAST(e.DNI AS int) IS NOT NULL
+
 
         -- Crear tabla temporal para clasificacion de productos
         CREATE TABLE #temp_clasificacion_producto (
