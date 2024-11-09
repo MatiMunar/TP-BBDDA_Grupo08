@@ -6,8 +6,11 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'sucursal' AND schema_id = 
 BEGIN
     CREATE TABLE creacion.sucursal (
         id_sucursal INT PRIMARY KEY IDENTITY(1,1),
-        nombre VARCHAR(100) NOT NULL,
-        ciudad VARCHAR(100) NOT NULL
+        ciudad VARCHAR(100) NOT NULL,
+		direccion VARCHAR(100) NOT NULL,
+		horario varchar(50) NOT NULL,
+		telefono VARCHAR(9) NOT NULL,
+		CONSTRAINT chk_telefono_formato CHECK (telefono LIKE '[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]' OR telefono LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]')
     );
 END
 ELSE
@@ -29,6 +32,7 @@ ELSE
 	PRINT('Ya existe la tabla "empleado"')
 GO
 
+
 -- Tabla catalogo_producto
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'catalogo_producto' AND schema_id = SCHEMA_ID('creacion'))
 BEGIN
@@ -40,7 +44,6 @@ END
 ELSE
 	PRINT('Ya existe la tabla "catalogo_producto"')
 GO
---DROP TABLE creacion.catalogo_producto
 
 -- Tabla producto
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'producto' AND schema_id = SCHEMA_ID('creacion'))
@@ -55,8 +58,6 @@ END
 ELSE
 	PRINT('Ya existe la tabla "producto"')
 GO
---DROP TABLE creacion.producto
-
 
 -- Tabla venta
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'venta' AND schema_id = SCHEMA_ID('creacion'))
@@ -94,4 +95,3 @@ END
 ELSE
 	PRINT('Ya existe la tabla "detalle_venta"')
 GO
---DROP TABLE creacion.detalle_venta

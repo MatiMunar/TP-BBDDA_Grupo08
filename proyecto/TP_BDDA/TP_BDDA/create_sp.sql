@@ -177,15 +177,17 @@ BEGIN
         EXEC sp_executesql @sql;
 
         -- Insertar datos en la tabla sucursal evitando duplicados
-        INSERT INTO creacion.sucursal (nombre, ciudad)
+        INSERT INTO creacion.sucursal (ciudad, direccion, horario, telefono)
         SELECT 
             ReemplazarPor, 
-            Ciudad
+            direccion,
+			horario,
+			telefono
         FROM #temp_sucursal ts
         WHERE NOT EXISTS (
             SELECT 1
             FROM creacion.sucursal s
-            WHERE s.nombre = ts.ReemplazarPor AND s.ciudad = ts.Ciudad
+            WHERE s.ciudad = ts.ReemplazarPor AND s.ciudad = ts.Ciudad
         );
 
         -- Crear tabla temporal para empleados
@@ -221,7 +223,7 @@ BEGIN
             e.LegajoID,                         
             s.id_sucursal  
         FROM #temp_empleado e
-        INNER JOIN creacion.sucursal s ON e.Sucursal = s.nombre
+        INNER JOIN creacion.sucursal s ON e.Sucursal = s.ciudad
         WHERE NOT EXISTS (
             SELECT 1
             FROM creacion.empleado emp
@@ -245,17 +247,11 @@ BEGIN
         EXEC sp_executesql @sql;
 
         -- Insertar datos en la tabla catalogo_producto evitando duplicados
-        INSERT INTO creacion.catalogo_producto (id_producto, tipo_catalogo)
+        INSERT INTO creacion.catalogo_producto (tipo_catalogo)
         SELECT 
-            p.id_producto,
-            cp.Producto  
+            DISTINCT(cp.LineaDeProducto)  
         FROM #temp_clasificacion_producto cp
-        INNER JOIN creacion.producto p ON cp.Producto = p.categoria
-        WHERE NOT EXISTS (
-            SELECT 1
-            FROM creacion.catalogo_producto c
-            WHERE c.id_producto = p.id_producto AND c.tipo_catalogo = cp.Producto
-        );
+     
 
         DROP TABLE #temp_sucursal;
         DROP TABLE #temp_empleado;
@@ -272,9 +268,9 @@ END;
 GO
 
 DROP PROCEDURE IF EXISTS insertar.ventas_registradas;
-	@rutaArchivo NVARCHAR(255)
 GO
 CREATE PROCEDURE insertar.ventas_registradas
+	@rutaArchivo NVARCHAR(255)
 AS
 BEGIN
     BEGIN TRY
