@@ -1,19 +1,11 @@
 USE Com2900G08
 
-
-
-DROP PROCEDURE IF EXISTS abm_empleado.dar_de_alta
+DROP PROCEDURE IF EXISTS abm_empleado.dar_de_alta_empleado
 go
-CREATE procedure abm_empleado.dar_de_alta
-	@legajo_par int,
+CREATE procedure abm_empleado.dar_de_alta_empleado
 	@nombre_par varchar(100),
-	@dni_par int,
-	@direccion_par varchar(150),
-	@email_personal_par varchar(100),
-	@email_empresa_par varchar(100),
-	@cargo_par varchar(50),
-	@sucursal_par varchar(100),
-	@turno_par varchar(50)
+	@legajo_par varchar(50),
+	@id_sucural_par int
 as
 BEGIN
 	if not exists (
@@ -22,21 +14,16 @@ BEGIN
 					where legajo = @legajo_par
 					)
 	BEGIN
-	declare @id_sucursal int
-	select @id_sucursal = id_sucursal
-	from creacion.sucursal
-	where ciudad = @sucursal_par
-
-	insert creacion.empleado (legajo,nombre,dni,direccion,email_personal,email_empresa,cargo,sucursal,turno, id_sucursal) 
-	values (@legajo_par,@nombre_par,@dni_par,@direccion_par,@email_personal_par,@email_empresa_par,@cargo_par,@sucursal_par,@turno_par,@id_sucursal)
+	insert creacion.empleado (nombre,legajo, id_sucursal) 
+	values (@nombre_par, @legajo_par, @id_sucural_par)
 	End
 	Else
 		print 'El empleado ya existe'
 end
 	
-DROP PROCEDURE IF EXISTS abm_emplado.dar_de_baja
+DROP PROCEDURE IF EXISTS abm_emplado.dar_de_baja_empleado
 go
-create procedure abm_empleado.dar_de_baja
+create procedure abm_empleado.dar_de_baja_empleado
 	@legajo_par varchar(50)
 as
 BEGIN
@@ -53,9 +40,9 @@ BEGIN
 		print 'El empleado no existe'
 END
 
-DROP PROCEDURE IF EXISTS abm_empleado.modificar
+DROP PROCEDURE IF EXISTS abm_empleado.modificar_empleado
 go
-create procedure abm_empleado.modificar
+create procedure abm_empleado.modificar_empleado
 	@nombreViejo varchar(100),
 	@nombreNuevo varchar(100)
 as
