@@ -3,14 +3,17 @@
   <Items>
     <LogicalFolder Name="Connections" Type="2" Sorted="true">
       <Items>
-        <ConnectionNode Name="COMPUMATI:COMPUMATI\Matias">
-          <Created>2024-11-09T17:12:45.5595068-03:00</Created>
+        <ConnectionNode Name="IVAN\SQLEXPRESS:IVAN\ivanr">
+          <Created>2024-11-09T18:37:48.7910196-03:00</Created>
           <Type>SQL</Type>
-          <Server>COMPUMATI</Server>
+          <Server>IVAN\SQLEXPRESS</Server>
           <UserName />
           <Authentication>Windows Authentication</Authentication>
           <InitialDB />
           <LoginTimeout>30</LoginTimeout>
+          <TrustServerCertificate>True</TrustServerCertificate>
+          <HostNameInServerCertificate />
+          <EncryptionOption>True</EncryptionOption>
           <ExecutionTimeout>0</ExecutionTimeout>
           <ConnectionProtocol>NotSpecified</ConnectionProtocol>
           <ApplicationName>Microsoft SQL Server Management Studio - Query</ApplicationName>
@@ -20,82 +23,82 @@
     <LogicalFolder Name="Queries" Type="0" Sorted="true">
       <Items>
         <FileNode Name="create_configuration.sql">
-          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:COMPUMATI:True</AssociatedConnectionMoniker>
-          <AssociatedConnSrvName>COMPUMATI</AssociatedConnSrvName>
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>create_configuration.sql</FullPath>
         </FileNode>
         <FileNode Name="create_database.sql">
-          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:COMPUMATI:True</AssociatedConnectionMoniker>
-          <AssociatedConnSrvName>COMPUMATI</AssociatedConnSrvName>
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>create_database.sql</FullPath>
         </FileNode>
         <FileNode Name="create_schema.sql">
-          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:COMPUMATI:True</AssociatedConnectionMoniker>
-          <AssociatedConnSrvName>COMPUMATI</AssociatedConnSrvName>
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>create_schema.sql</FullPath>
         </FileNode>
         <FileNode Name="create_sp.sql">
-          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:COMPUMATI:True</AssociatedConnectionMoniker>
-          <AssociatedConnSrvName>COMPUMATI</AssociatedConnSrvName>
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>create_sp.sql</FullPath>
         </FileNode>
         <FileNode Name="create_sp_abm_catalogo_producto.sql">
-          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:COMPUMATI:True</AssociatedConnectionMoniker>
-          <AssociatedConnSrvName>COMPUMATI</AssociatedConnSrvName>
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>create_sp_abm_catalogo_producto.sql</FullPath>
         </FileNode>
         <FileNode Name="create_sp_abm_empleado.sql">
-          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:COMPUMATI:True</AssociatedConnectionMoniker>
-          <AssociatedConnSrvName>COMPUMATI</AssociatedConnSrvName>
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>create_sp_abm_empleado.sql</FullPath>
         </FileNode>
         <FileNode Name="create_sp_abm_producto.sql">
-          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:COMPUMATI:True</AssociatedConnectionMoniker>
-          <AssociatedConnSrvName>COMPUMATI</AssociatedConnSrvName>
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
           <AssociatedConnUserName />
           <FullPath>create_sp_abm_producto.sql</FullPath>
         </FileNode>
         <FileNode Name="create_sp_abm_sucursal.sql">
-          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:COMPUMATI:True</AssociatedConnectionMoniker>
-          <AssociatedConnSrvName>COMPUMATI</AssociatedConnSrvName>
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
           <AssociatedConnUserName />
           <FullPath>create_sp_abm_sucursal.sql</FullPath>
         </FileNode>
         <FileNode Name="create_table.sql">
-          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:COMPUMATI:True</AssociatedConnectionMoniker>
-          <AssociatedConnSrvName>COMPUMATI</AssociatedConnSrvName>
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>create_table.sql</FullPath>
         </FileNode>
         <FileNode Name="drop_tables.sql">
-          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:COMPUMATI:True</AssociatedConnectionMoniker>
-          <AssociatedConnSrvName>COMPUMATI</AssociatedConnSrvName>
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>drop_tables.sql</FullPath>
         </FileNode>
+        <FileNode Name="exec_abm_empleado.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>exec_abm_empleado.sql</FullPath>
+        </FileNode>
         <FileNode Name="exec_abm_sucursal.sql">
-          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:COMPUMATI:True</AssociatedConnectionMoniker>
-          <AssociatedConnSrvName>COMPUMATI</AssociatedConnSrvName>
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
           <AssociatedConnUserName />
           <FullPath>exec_abm_sucursal.sql</FullPath>
         </FileNode>
         <FileNode Name="exec_sp.sql">
-          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:COMPUMATI:True</AssociatedConnectionMoniker>
-          <AssociatedConnSrvName>COMPUMATI</AssociatedConnSrvName>
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>exec_sp.sql</FullPath>
-        </FileNode>
-        <FileNode Name="tp_general.sql">
-          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:COMPUMATI:True</AssociatedConnectionMoniker>
-          <AssociatedConnSrvName>COMPUMATI</AssociatedConnSrvName>
-          <AssociatedConnUserName />
-          <FullPath>tp_general.sql</FullPath>
         </FileNode>
       </Items>
     </LogicalFolder>

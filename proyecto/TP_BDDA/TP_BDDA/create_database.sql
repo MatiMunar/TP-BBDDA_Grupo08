@@ -3,5 +3,5 @@ BEGIN
     CREATE DATABASE Com2900G08;
 END
 ELSE
-	PRINT('Ya existe la Base de Datos "Com2900G08"')
+	RAISERROR('Ya existe la Base de Datos "Com2900G08"', 16, 1);
 GO

@@ -4,7 +4,8 @@ GO
 DROP PROCEDURE IF EXISTS insertar.datos_catalogo;
 GO
 CREATE PROCEDURE insertar.datos_catalogo
-	@rutaArchivo NVARCHAR(255)
+	@rutaArchivo NVARCHAR(255),
+	@rutaArchComplement NVARCHAR(255)
 AS
 BEGIN
     -- Creamos la tabla temporal
@@ -34,18 +35,29 @@ BEGIN
 	EXEC sp_executesql @sql;
 
     -- Insertar los datos en la tabla producto con conversión condicional
-    INSERT INTO creacion.producto (nombre_producto, precio, categoria)
-    SELECT 
-        name,
-        TRY_CAST(price AS DECIMAL(8,2)) AS price, -- Convierte a DECIMAL, o NULL si no es posible
-        category
-    FROM #temp_catalogo t
-    WHERE NOT EXISTS (
-        SELECT 1
-        FROM creacion.producto p
-        WHERE p.nombre_producto = t.name
-          AND p.categoria = t.category
-    );
+	DECLARE @sqlAux NVARCHAR(MAX);
+	SET @sqlAux = N'
+    INSERT INTO creacion.producto (nombre_producto, precio, categoria, id_catalogo)
+        SELECT 
+            t.name,
+            TRY_CAST(t.price AS DECIMAL(8,2)) AS price, -- Convierte a DECIMAL, o NULL si no es posible
+            t.category,
+            ca.id_catalogo_producto
+        FROM #temp_catalogo t
+        INNER JOIN OPENROWSET(
+            ''Microsoft.ACE.OLEDB.16.0'',
+            ''Excel 12.0;HDR=YES;Database=' + @rutaArchComplement + ''',
+            ''SELECT * FROM [Clasificacion productos$]''
+        ) AS c ON t.category = c.Producto
+        INNER JOIN creacion.catalogo_producto ca ON ca.tipo_catalogo = c.[Línea de producto]
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM creacion.producto p
+            WHERE p.nombre_producto = t.name
+              AND p.categoria = t.category
+        )';
+
+		EXEC sp_executesql @sqlAux;
 
     -- Limpiar la tabla temporal
     DROP TABLE #temp_catalogo;
@@ -53,11 +65,11 @@ BEGIN
     PRINT 'Datos insertados correctamente en la tabla producto.';
 END;
 GO
-
 DROP PROCEDURE IF EXISTS insertar.datos_electronic_accessories;
 GO
 CREATE PROCEDURE insertar.datos_electronic_accessories
-	 @rutaArchivo NVARCHAR(255)
+    @rutaArchivo NVARCHAR(255),
+    @rutaArchComplement NVARCHAR(255)
 AS
 BEGIN
     -- Creamos la tabla temporal
@@ -77,21 +89,33 @@ BEGIN
         ''SELECT * FROM [Sheet1$]''
     )';
 
-	EXEC sp_executesql @sql;
+    EXEC sp_executesql @sql;
 
-    INSERT INTO creacion.producto (nombre_producto, precio, categoria)
-    SELECT 
-        Product,
-        TRY_CAST(REPLACE([Precio Unitario en dolares], ',', '.') AS DECIMAL(8,2)) AS Price,  -- Convierte a DECIMAL, cambiando la coma por punto
-        'Electronic accessories'
-    FROM #temp_electronic_accessories t
-    WHERE NOT EXISTS (
-        SELECT 1
-        FROM creacion.producto p
-        WHERE p.nombre_producto = t.Product
-          AND p.categoria = 'Electronic accessories'
-    );
+    DECLARE @sqlAux NVARCHAR(MAX);
+    SET @sqlAux = N'
+    INSERT INTO creacion.producto (nombre_producto, precio, categoria, id_catalogo)
+        SELECT 
+            e.Product,
+            TRY_CAST(REPLACE([Precio Unitario en dolares], '','', ''.'') AS DECIMAL(8,2)) AS Price,  -- Convierte a DECIMAL, cambiando la coma por punto
+            ''Electronic accessories'',  -- Categoría fija como texto
+            ca.id_catalogo_producto
+        FROM #temp_electronic_accessories e
+        LEFT JOIN OPENROWSET(
+            ''Microsoft.ACE.OLEDB.16.0'',
+            ''Excel 12.0;HDR=YES;Database=' + @rutaArchComplement + ''',
+            ''SELECT * FROM [Clasificacion productos$]''
+        ) AS c ON e.Product = c.Producto
+        LEFT JOIN creacion.catalogo_producto ca ON ca.tipo_catalogo = c.[Línea de producto]
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM creacion.producto p
+            WHERE p.nombre_producto = e.Product
+              AND p.categoria = ''Electronic accessories''
+        )';
 
+    EXEC sp_executesql @sqlAux;
+
+    -- Limpiar la tabla temporal
     DROP TABLE #temp_electronic_accessories;
 
     PRINT 'Datos insertados correctamente en la tabla producto.';
@@ -127,12 +151,14 @@ BEGIN
 
 	EXEC sp_executesql @sql;
 
-    INSERT INTO creacion.producto (nombre_producto, precio, categoria)
+    INSERT INTO creacion.producto (nombre_producto, precio, categoria, id_catalogo)
     SELECT 
-        NombreProducto,
-        TRY_CAST(REPLACE(PrecioUnidad, ',', '.') AS DECIMAL(10,2)) AS Precio,  -- Convierte a DECIMAL reemplazando coma por punto
-        Categoría
+        t.NombreProducto,
+        TRY_CAST(REPLACE(t.PrecioUnidad, ',', '.') AS DECIMAL(10,2)) AS Precio,  -- Convierte a DECIMAL reemplazando coma por punto
+        t.Categoría,
+		c.id_catalogo_producto
     FROM #temp_productos_importados t
+	LEFT JOIN creacion.catalogo_producto c ON c.tipo_catalogo = t.Categoría
     WHERE NOT EXISTS (
         SELECT 1
         FROM creacion.producto p
@@ -177,9 +203,10 @@ BEGIN
         EXEC sp_executesql @sql;
 
         -- Insertar datos en la tabla sucursal evitando duplicados
-        INSERT INTO creacion.sucursal (ciudad, direccion, horario, telefono)
+        INSERT INTO creacion.sucursal (sucursal, ciudad, direccion, horario, telefono)
         SELECT 
-            ReemplazarPor, 
+            ReemplazarPor,
+			Ciudad,
             direccion,
 			horario,
 			telefono
@@ -187,16 +214,17 @@ BEGIN
         WHERE NOT EXISTS (
             SELECT 1
             FROM creacion.sucursal s
-            WHERE s.ciudad = ts.ReemplazarPor AND s.ciudad = ts.Ciudad
+            WHERE s.sucursal = ts.ReemplazarPor
+			AND s.ciudad = ts.Ciudad
         );
 
         -- Crear tabla temporal para empleados
         CREATE TABLE #temp_empleado (
-            LegajoID VARCHAR(50),
+            LegajoID INT,
             Nombre VARCHAR(100),
             Apellido VARCHAR(100),
-            DNI VARCHAR(20),
-            Direccion NVARCHAR(250),
+            DNI INT,
+            Direccion NVARCHAR(150),
             EmailPersonal NVARCHAR(100),
             EmailEmpresa NVARCHAR(100),
             CUIL VARCHAR(50),
@@ -217,13 +245,19 @@ BEGIN
         EXEC sp_executesql @sql;
 
         -- Insertar datos en la tabla empleado evitando duplicados
-        INSERT INTO creacion.empleado (nombre, legajo, id_sucursal)
+        INSERT INTO creacion.empleado (nombre, legajo, id_sucursal, dni, direccion, email_personal, email_empresa, cargo, turno)
         SELECT 
             CONCAT(e.Nombre, ' ', e.Apellido),  -- Concatenar Nombre y Apellido
             e.LegajoID,                         
-            s.id_sucursal  
+            s.id_sucursal,
+			e.DNI,
+			e.Direccion,
+			e.EmailPersonal,
+			e.EmailEmpresa,
+			e.Cargo,
+			e.Turno
         FROM #temp_empleado e
-        INNER JOIN creacion.sucursal s ON e.Sucursal = s.ciudad
+        INNER JOIN creacion.sucursal s ON e.Sucursal = s.sucursal
         WHERE NOT EXISTS (
             SELECT 1
             FROM creacion.empleado emp
@@ -248,10 +282,14 @@ BEGIN
 
         -- Insertar datos en la tabla catalogo_producto evitando duplicados
         INSERT INTO creacion.catalogo_producto (tipo_catalogo)
-        SELECT 
-            DISTINCT(cp.LineaDeProducto)  
+        SELECT DISTINCT
+            cp.LineaDeProducto
         FROM #temp_clasificacion_producto cp
-     
+		WHERE NOT EXISTS(
+			SELECT 1
+			FROM creacion.catalogo_producto c
+			WHERE c.tipo_catalogo = cp.LineaDeProducto
+		);
 
         DROP TABLE #temp_sucursal;
         DROP TABLE #temp_empleado;
@@ -311,21 +349,23 @@ BEGIN
         -- Insertar datos en la tabla venta evitando duplicados
         INSERT INTO creacion.venta (id_factura, tipo_factura, fecha, hora, medio_pago, id_empleado, id_sucursal)
         SELECT 
-            ID_Factura,
-            Tipo_de_Factura,
-            CAST(Fecha AS DATE),
-            CAST(Hora AS TIME),
-            Medio_de_Pago,
-            (SELECT TOP 1 id_empleado FROM creacion.empleado WHERE legajo = Empleado),  -- Relacionar con el empleado
-            (SELECT TOP 1 id_sucursal FROM creacion.sucursal WHERE ciudad = Ciudad)  -- Relacionar con la sucursal
+            tv.ID_Factura,
+            tv.Tipo_de_Factura,
+            CAST(tv.Fecha AS DATE),
+            CAST(tv.Hora AS TIME),
+            tv.Medio_de_Pago,
+            emp.id_empleado,
+            suc.id_sucursal
         FROM #temp_ventas tv
+        LEFT JOIN creacion.empleado emp ON tv.Empleado = emp.legajo
+        LEFT JOIN creacion.sucursal suc ON tv.Ciudad = suc.ciudad
         WHERE NOT EXISTS (
             SELECT 1 
             FROM creacion.venta v
             WHERE v.id_factura = tv.ID_Factura
         );
 
-        -- Crear tabla temporal para almacenar detalles de venta
+        -- Crear tabla temporal para detalles de venta
         CREATE TABLE #temp_detalle_venta (
             id_venta INT,
             id_producto INT,
@@ -338,11 +378,11 @@ BEGIN
         SELECT 
             v.id_venta,
             p.id_producto,
-            t.Cantidad,
-            t.Precio_Unitario
-        FROM #temp_ventas t
-        INNER JOIN creacion.venta v ON t.ID_Factura = v.id_factura
-        INNER JOIN creacion.producto p ON t.Producto = p.nombre_producto
+            tv.Cantidad,
+            TRY_CAST(REPLACE(tv.Precio_Unitario, ',', '.') AS DECIMAL(10, 2))  -- Conversion a DECIMAL y manejo de coma
+        FROM #temp_ventas tv
+        INNER JOIN creacion.venta v ON tv.ID_Factura = v.id_factura
+        INNER JOIN creacion.producto p ON tv.Producto = p.nombre_producto
         WHERE NOT EXISTS (
             SELECT 1 
             FROM creacion.detalle_venta dv
@@ -352,6 +392,7 @@ BEGIN
         INSERT INTO creacion.detalle_venta (id_venta, id_producto, cantidad, precio_unitario)
         SELECT id_venta, id_producto, cantidad, precio_unitario FROM #temp_detalle_venta;
 
+        -- Limpiar tablas temporales
         DROP TABLE #temp_ventas;
         DROP TABLE #temp_detalle_venta;
 
@@ -359,7 +400,7 @@ BEGIN
         PRINT 'Datos de ventas cargados correctamente.';
     END TRY
     BEGIN CATCH
-        ROLLBACK TRANSACTION;  -- Revertir la transacción en caso de error
+        ROLLBACK TRANSACTION;
         PRINT 'Error al cargar los datos: ' + ERROR_MESSAGE();
     END CATCH
 END;

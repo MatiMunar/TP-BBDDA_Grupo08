@@ -2,60 +2,60 @@ USE Com2900G08
 go
 
 
-DROP PROCEDURE IF exists abm_catalogo_producto.dar_alta
+DROP PROCEDURE IF EXISTS abm_catalogo_producto.dar_alta
 GO
 CREATE PROCEDURE abm_catalogo_producto.dar_alta
 	@catalogo_par varchar(50)
 AS
 BEGIN
-	if not exists(
-					select 1
-					from creacion.catalogo_producto
-					where tipo_catalogo = @catalogo_par
+	IF NOT EXISTS(
+					SELECT 1
+					FROM creacion.catalogo_producto
+					WHERE tipo_catalogo = @catalogo_par
 				)
 	BEGIN
 		INSERT creacion.catalogo_producto (tipo_catalogo)
-		values (@catalogo_par)
+		VALUES (@catalogo_par)
 	END
 	ELSE
-		print 'Ya existe esta categoria'
+		RAISERROR('Ya existe esta categoria', 16, 1)
 END
 
-DROP PROCEDURE IF exists abm_catalogo_producto.dar_de_baja
+DROP PROCEDURE IF EXISTS abm_catalogo_producto.dar_de_baja
 GO
 CREATE PROCEDURE abm_catalogo_producto.dar_de_baja
 	@catalogo_par varchar(50)
 AS
 BEGIN
-	if exists(
-					select 1
-					from creacion.catalogo_producto
-					where tipo_catalogo = @catalogo_par
+	IF EXISTS(
+					SELECT 1
+					FROM creacion.catalogo_producto
+					WHERE tipo_catalogo = @catalogo_par
 				)
 	BEGIN
 		DELETE FROM creacion.catalogo_producto
-		where tipo_catalogo = @catalogo_par
+		WHERE tipo_catalogo = @catalogo_par
 	END
 	ELSE
-		print 'No existe esta categoria'
+		RAISERROR('No existe esta categoria', 16, 1)
 END
 
-DROP PROCEDURE IF exists abm_catalogo_producto.modificar
+DROP PROCEDURE IF EXISTS abm_catalogo_producto.modificar
 GO
 CREATE PROCEDURE abm_catalogo_producto.modificar
-	@catalogo_par varchar(50),
-	@aBuscar varchar(50)
+	@catalogo_par VARCHAR(50),
+	@aBuscar VARCHAR(50)
 AS
 BEGIN
-	if exists(
-				select 1
-				from creacion.catalogo_producto
-				where tipo_catalogo = @aBuscar
+	IF EXISTS(
+				SELECT 1
+				FROM creacion.catalogo_producto
+				WHERE tipo_catalogo = @aBuscar
 			)
 	BEGIN
-		update creacion.catalogo_producto
-		set tipo_catalogo = @catalogo_par
+		UPDATE creacion.catalogo_producto
+		SET tipo_catalogo = @catalogo_par
 	END
 	ELSE
-		print 'No existe esta categoria'
+		RAISERROR('No existe esta categoria', 16, 1)
 END
