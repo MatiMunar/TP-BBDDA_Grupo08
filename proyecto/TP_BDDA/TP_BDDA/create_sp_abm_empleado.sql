@@ -1,6 +1,8 @@
 USE Com2900G08
+GO
 
-
+select * from
+creacion.sucursal
 
 DROP PROCEDURE IF EXISTS abm_empleado.dar_de_alta
 go
@@ -25,13 +27,13 @@ BEGIN
 	declare @id_sucursal int
 	select @id_sucursal = id_sucursal
 	from creacion.sucursal
-	where ciudad = @sucursal_par
+	where sucursal = @sucursal_par
 
-	insert creacion.empleado (legajo,nombre,dni,direccion,email_personal,email_empresa,cargo,sucursal,turno, id_sucursal) 
-	values (@legajo_par,@nombre_par,@dni_par,@direccion_par,@email_personal_par,@email_empresa_par,@cargo_par,@sucursal_par,@turno_par,@id_sucursal)
+	insert creacion.empleado (legajo,nombre,dni,direccion,email_personal,email_empresa,cargo,turno, id_sucursal) 
+	values (@legajo_par,@nombre_par,@dni_par,@direccion_par,@email_personal_par,@email_empresa_par,@cargo_par,@turno_par,@id_sucursal)
 	End
 	Else
-		print 'El empleado ya existe'
+	RAISERROR('El empleado ya existe', 16, 1);
 end
 	
 DROP PROCEDURE IF EXISTS abm_emplado.dar_de_baja
@@ -50,25 +52,49 @@ BEGIN
 	where legajo = @legajo_par
 	end
 	Else
-		print 'El empleado no existe'
+		RAISERROR('El empleado no existe', 16, 1);
 END
 
 DROP PROCEDURE IF EXISTS abm_empleado.modificar
 go
 create procedure abm_empleado.modificar
-	@nombreViejo varchar(100),
-	@nombreNuevo varchar(100)
+	@legajo_par int = null,
+	@nombre_par char(100)= null,
+	@dni_par int = null,
+	@direccion_par char(150) = null,
+	@email_personal_par char(100) = null,
+	@email_empresa_par char(100) = null,
+	@cargo_par char(50) = null,
+	@turno_par char(50) = null,
+	@legajo_buscar int
 as
 BEGIN 
 	if exists (
 				select 1
 				from creacion.empleado
-				where nombre = @nombreViejo
+				where legajo = @legajo_buscar
 				)
 	BEGIN
+	DECLARE @id_sucural int
+	select @id_sucural = id_sucursal
+	from creacion.empleado
+	where legajo = @legajo_buscar
+
 		update creacion.empleado
-		set nombre = @nombreNuevo
+		set 
+			legajo = coalesce(@legajo_par, legajo),
+			nombre = coalesce(@nombre_par, nombre),
+			dni = coalesce(@dni_par, dni),
+			direccion = coalesce(@direccion_par, direccion),
+			email_personal = coalesce(@email_personal_par, email_personal),
+			email_empresa = coalesce(@email_empresa_par, email_empresa),
+			cargo = coalesce(@cargo_par, cargo),
+			turno = coalesce(@turno_par, turno),
+			id_sucursal = @id_sucural
+			where legajo = @legajo_buscar
 	END
 	Else
-		print 'El empleado no existe'
+		RAISERROR('El empleado no existe', 16, 1);
 END
+
+select * from creacion.empleado

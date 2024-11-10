@@ -55,6 +55,7 @@ BEGIN
 	BEGIN
 		UPDATE creacion.catalogo_producto
 		SET tipo_catalogo = @catalogo_par
+		WHERE tipo_catalogo = @aBuscar
 	END
 	ELSE
 		RAISERROR('No existe esta categoria', 16, 1)
