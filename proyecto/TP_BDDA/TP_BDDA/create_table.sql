@@ -77,6 +77,8 @@ BEGIN
         fecha DATE NOT NULL,
         hora TIME NOT NULL,
         medio_pago CHAR(50) NOT NULL,
+		tipo_cliente CHAR(50),
+		genero CHAR(50),
         id_factura CHAR(30),
         id_empleado INT,
         id_sucursal INT,

@@ -1,4 +1,4 @@
-use Com2900G08
+USE Com2900G08
 GO
 
 DROP PROCEDURE IF EXISTS insertar.datos_catalogo;
@@ -34,13 +34,24 @@ BEGIN
 
 	EXEC sp_executesql @sql;
 
+	-- Obtenemos la tasa de cambio de USD a ARS
+	DECLARE @tasaDeCambio DECIMAL(10,4);
+    SET @tasaDeCambio = insertar.obtenerTasaCambioUSD_ARS()
+	IF @tasaDeCambio IS NULL
+	BEGIN
+		RAISERROR('No se pudo obtener la tasa de cambio de USD a ARS.', 17, 1);
+		RETURN;
+	END;
+
+	PRINT 'La tasa de cambio USD a ARS es: ' + CAST(@tasaDeCambio AS NVARCHAR(20));
+
     -- Insertar los datos en la tabla producto con conversión condicional
 	DECLARE @sqlAux NVARCHAR(MAX);
 	SET @sqlAux = N'
     INSERT INTO creacion.producto (nombre_producto, precio, categoria, id_catalogo)
         SELECT 
             t.name,
-            TRY_CAST(t.price AS DECIMAL(8,2)) AS price, -- Convierte a DECIMAL, o NULL si no es posible
+            TRY_CAST(t.price AS DECIMAL(8,2)) * CAST(@tasaDeCambio AS DECIMAL(10,4)) AS Price, -- Convierte a DECIMAL, o NULL si no es posible
             t.category,
             ca.id_catalogo_producto
         FROM #temp_catalogo t
@@ -57,7 +68,7 @@ BEGIN
               AND p.categoria = t.category
         )';
 
-		EXEC sp_executesql @sqlAux;
+		EXEC sp_executesql @sqlAux, N'@tasaDeCambio DECIMAL(10,4)', @tasaDeCambio;
 
     -- Limpiar la tabla temporal
     DROP TABLE #temp_catalogo;
@@ -68,10 +79,14 @@ GO
 DROP PROCEDURE IF EXISTS insertar.datos_electronic_accessories;
 GO
 CREATE PROCEDURE insertar.datos_electronic_accessories
-    @rutaArchivo NVARCHAR(255),
-    @rutaArchComplement NVARCHAR(255)
+    @rutaArchivo NVARCHAR(255)
 AS
 BEGIN
+	IF NOT EXISTS (SELECT 1 FROM creacion.catalogo_producto WHERE tipo_catalogo = 'Electronic accessories')
+		BEGIN
+			INSERT INTO creacion.catalogo_producto (tipo_catalogo)
+			VALUES ('Electronic accessories');
+		END
     -- Creamos la tabla temporal
     CREATE TABLE #temp_electronic_accessories (
         Product NVARCHAR(150),
@@ -91,29 +106,31 @@ BEGIN
 
     EXEC sp_executesql @sql;
 
-    DECLARE @sqlAux NVARCHAR(MAX);
-    SET @sqlAux = N'
+	-- Obtenemos la tasa de cambio de USD a ARS
+	DECLARE @tasaDeCambio DECIMAL(10,4);
+    SET @tasaDeCambio = insertar.obtenerTasaCambioUSD_ARS()
+	IF @tasaDeCambio IS NULL
+	BEGIN
+		RAISERROR('No se pudo obtener la tasa de cambio de USD a ARS.', 17, 1);
+		RETURN;
+	END;
+
+	PRINT 'La tasa de cambio USD a ARS es: ' + CAST(@tasaDeCambio AS NVARCHAR(20));
+
     INSERT INTO creacion.producto (nombre_producto, precio, categoria, id_catalogo)
         SELECT 
             e.Product,
-            TRY_CAST(REPLACE([Precio Unitario en dolares], '','', ''.'') AS DECIMAL(8,2)) AS Price,  -- Convierte a DECIMAL, cambiando la coma por punto
-            ''Electronic accessories'',  -- Categoría fija como texto
+            TRY_CAST(REPLACE([Precio Unitario en dolares], ',', '.') AS DECIMAL(8,2)) * CAST(@tasaDeCambio AS DECIMAL(10,4)) AS Price,
+            'Electronic accessories',  -- Categoría fija como texto
             ca.id_catalogo_producto
         FROM #temp_electronic_accessories e
-        LEFT JOIN OPENROWSET(
-            ''Microsoft.ACE.OLEDB.16.0'',
-            ''Excel 12.0;HDR=YES;Database=' + @rutaArchComplement + ''',
-            ''SELECT * FROM [Clasificacion productos$]''
-        ) AS c ON e.Product = c.Producto
-        LEFT JOIN creacion.catalogo_producto ca ON ca.tipo_catalogo = c.[Línea de producto]
+        INNER JOIN creacion.catalogo_producto ca ON ca.tipo_catalogo = 'Electronic accessories'
         WHERE NOT EXISTS (
             SELECT 1
             FROM creacion.producto p
             WHERE p.nombre_producto = e.Product
-              AND p.categoria = ''Electronic accessories''
-        )';
-
-    EXEC sp_executesql @sqlAux;
+              AND p.categoria = 'Electronic accessories'
+        );
 
     -- Limpiar la tabla temporal
     DROP TABLE #temp_electronic_accessories;
@@ -151,10 +168,20 @@ BEGIN
 
 	EXEC sp_executesql @sql;
 
+	DECLARE @tasaDeCambio DECIMAL(10,4);
+    SET @tasaDeCambio = insertar.obtenerTasaCambioUSD_ARS()
+	IF @tasaDeCambio IS NULL
+	BEGIN
+		RAISERROR('No se pudo obtener la tasa de cambio de USD a ARS.', 17, 1);
+		RETURN;
+	END;
+
+	PRINT 'La tasa de cambio USD a ARS es: ' + CAST(@tasaDeCambio AS NVARCHAR(20));
+
     INSERT INTO creacion.producto (nombre_producto, precio, categoria, id_catalogo)
     SELECT 
         t.NombreProducto,
-        TRY_CAST(REPLACE(t.PrecioUnidad, ',', '.') AS DECIMAL(10,2)) AS Precio,  -- Convierte a DECIMAL reemplazando coma por punto
+        TRY_CAST(REPLACE(t.PrecioUnidad, ',', '.') AS DECIMAL(10,2)) * CAST(@tasaDeCambio AS DECIMAL(10,4)) AS Price,
         t.Categoría,
 		c.id_catalogo_producto
     FROM #temp_productos_importados t
@@ -347,7 +374,7 @@ BEGIN
         EXEC sp_executesql @sql;
 
         -- Insertar datos en la tabla venta evitando duplicados
-        INSERT INTO creacion.venta (id_factura, tipo_factura, fecha, hora, medio_pago, id_empleado, id_sucursal)
+        INSERT INTO creacion.venta (id_factura, tipo_factura, fecha, hora, medio_pago, id_empleado, id_sucursal, tipo_cliente, genero)
         SELECT 
             tv.ID_Factura,
             tv.Tipo_de_Factura,
@@ -355,7 +382,9 @@ BEGIN
             CAST(tv.Hora AS TIME),
             tv.Medio_de_Pago,
             emp.id_empleado,
-            suc.id_sucursal
+            suc.id_sucursal,
+			tv.Tipo_de_Cliente,
+			tv.Genero
         FROM #temp_ventas tv
         LEFT JOIN creacion.empleado emp ON tv.Empleado = emp.legajo
         LEFT JOIN creacion.sucursal suc ON tv.Ciudad = suc.ciudad
@@ -403,5 +432,20 @@ BEGIN
         ROLLBACK TRANSACTION;
         PRINT 'Error al cargar los datos: ' + ERROR_MESSAGE();
     END CATCH
+END;
+GO
+DROP PROCEDURE IF EXISTS insertar.actualizar_categoria
+GO
+CREATE PROCEDURE insertar.actualizar_categoria
+AS
+BEGIN
+    -- Actualizar los productos con categoría NULL
+    UPDATE p
+    SET p.categoria = 'Sin categoria',
+        p.id_catalogo = 10
+    FROM creacion.producto p
+    WHERE p.id_catalogo IS NULL;
+
+    PRINT 'Las categorías NULL han sido actualizadas a "Otros" con id_catalogo = 10';
 END;
 GO

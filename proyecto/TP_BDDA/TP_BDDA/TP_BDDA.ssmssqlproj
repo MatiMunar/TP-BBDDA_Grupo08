@@ -34,6 +34,12 @@
           <AssociatedConnUserName />
           <FullPath>create_database.sql</FullPath>
         </FileNode>
+        <FileNode Name="create_ft_exchange.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>create_ft_exchange.sql</FullPath>
+        </FileNode>
         <FileNode Name="create_schema.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
@@ -76,11 +82,11 @@
           <AssociatedConnUserName />
           <FullPath>create_table.sql</FullPath>
         </FileNode>
-        <FileNode Name="drop_tables.sql">
+        <FileNode Name="drop_table.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
-          <FullPath>drop_tables.sql</FullPath>
+          <FullPath>drop_table.sql</FullPath>
         </FileNode>
         <FileNode Name="exec_abm_empleado.sql">
           <AssociatedConnectionMoniker />
