@@ -190,7 +190,6 @@ BEGIN
         SELECT 1
         FROM creacion.producto p
         WHERE p.nombre_producto = t.NombreProducto
-          AND p.categoria = t.Categoría
     );
 
     DROP TABLE #temp_productos_importados;
@@ -271,16 +270,18 @@ BEGIN
         )';
         EXEC sp_executesql @sql;
 
+		OPEN SYMMETRIC KEY ClaveEmpleado DECRYPTION BY CERTIFICATE CertificadoEmpleado;
+
         -- Insertar datos en la tabla empleado evitando duplicados
         INSERT INTO creacion.empleado (nombre, legajo, id_sucursal, dni, direccion, email_personal, email_empresa, cargo, turno)
         SELECT 
             CONCAT(e.Nombre, ' ', e.Apellido),  -- Concatenar Nombre y Apellido
             e.LegajoID,                         
             s.id_sucursal,
-			e.DNI,
-			e.Direccion,
-			e.EmailPersonal,
-			e.EmailEmpresa,
+			EncryptByKey(Key_GUID('ClaveEmpleado'), CONVERT(VARCHAR(15), e.DNI)),    -- Encriptar DNI
+			EncryptByKey(Key_GUID('ClaveEmpleado'), e.Direccion),                    -- Encriptar Dirección
+			EncryptByKey(Key_GUID('ClaveEmpleado'), e.EmailPersonal),                -- Encriptar Email Personal
+			EncryptByKey(Key_GUID('ClaveEmpleado'), e.EmailEmpresa),                 -- Encriptar Email Empresa
 			e.Cargo,
 			e.Turno
         FROM #temp_empleado e
@@ -290,6 +291,8 @@ BEGIN
             FROM creacion.empleado emp
             WHERE emp.legajo = e.LegajoID
         );
+
+		CLOSE SYMMETRIC KEY ClaveEmpleado;
 
         -- Crear tabla temporal para clasificacion de productos
         CREATE TABLE #temp_clasificacion_producto (

@@ -25,10 +25,10 @@ BEGIN
         id_empleado INT PRIMARY KEY IDENTITY(1,1),
 		legajo INT NOT NULL UNIQUE,
         nombre CHAR(100) NOT NULL,
-        dni INT NOT NULL UNIQUE,
-		direccion CHAR(150) NOT NULL,
-		email_personal CHAR(100) NOT NULL,
-		email_empresa CHAR(100) NOT NULL,
+        dni VARBINARY(128) NOT NULL,
+		direccion VARBINARY(256) NOT NULL,
+        email_personal VARBINARY(256) NOT NULL,
+        email_empresa VARBINARY(256) NOT NULL,
 		cargo CHAR(50) NOT NULL,
 		turno CHAR(50) NOT NULL,
         id_sucursal INT,
@@ -105,4 +105,19 @@ BEGIN
 END
 ELSE
 	RAISERROR('Ya existe la tabla "detalle_venta"', 16, 1);
+GO
+-- Creación de la tabla nota_credito
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'nota_credito' AND schema_id = SCHEMA_ID('creacion'))
+BEGIN
+    CREATE TABLE creacion.nota_credito (
+        id_nota_credito INT PRIMARY KEY IDENTITY(1,1),
+        id_venta INT NOT NULL,
+        valor DECIMAL(10, 2) NOT NULL,
+        fecha_emision DATE NOT NULL DEFAULT GETDATE(), -- Fecha de emisión de la nota
+        tipo CHAR(50) CHECK (tipo IN ('Reembolso', 'Cambio')),
+        FOREIGN KEY (id_venta) REFERENCES creacion.venta(id_venta)
+    );
+END
+ELSE
+    RAISERROR('La tabla "nota_credito" ya existe.', 16, 1);
 GO

@@ -40,6 +40,18 @@
           <AssociatedConnUserName />
           <FullPath>create_ft_exchange.sql</FullPath>
         </FileNode>
+        <FileNode Name="create_key.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>create_key.sql</FullPath>
+        </FileNode>
+        <FileNode Name="create_rol.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>create_rol.sql</FullPath>
+        </FileNode>
         <FileNode Name="create_schema.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
@@ -76,6 +88,12 @@
           <AssociatedConnUserName />
           <FullPath>create_sp_abm_sucursal.sql</FullPath>
         </FileNode>
+        <FileNode Name="create_sp_nota_credito.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>create_sp_nota_credito.sql</FullPath>
+        </FileNode>
         <FileNode Name="create_table.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
@@ -89,8 +107,8 @@
           <FullPath>drop_table.sql</FullPath>
         </FileNode>
         <FileNode Name="exec_abm_empleado.sql">
-          <AssociatedConnectionMoniker />
-          <AssociatedConnSrvName />
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>exec_abm_empleado.sql</FullPath>
         </FileNode>
@@ -105,6 +123,18 @@
           <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>exec_sp.sql</FullPath>
+        </FileNode>
+        <FileNode Name="exec_sp_nota_credito.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>exec_sp_nota_credito.sql</FullPath>
+        </FileNode>
+        <FileNode Name="permissions.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>permissions.sql</FullPath>
         </FileNode>
       </Items>
     </LogicalFolder>
