@@ -106,16 +106,14 @@ END
 ELSE
 	RAISERROR('Ya existe la tabla "detalle_venta"', 16, 1);
 GO
--- Creación de la tabla nota_credito
+-- CreaciÃ³n de la tabla nota_credito
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'nota_credito' AND schema_id = SCHEMA_ID('creacion'))
 BEGIN
     CREATE TABLE creacion.nota_credito (
         id_nota_credito INT PRIMARY KEY IDENTITY(1,1),
-        id_venta INT NOT NULL,
+	id_factura VARCHAR(50),
         valor DECIMAL(10, 2) NOT NULL,
-        fecha_emision DATE NOT NULL DEFAULT GETDATE(), -- Fecha de emisión de la nota
-        tipo CHAR(50) CHECK (tipo IN ('Reembolso', 'Cambio')),
-        FOREIGN KEY (id_venta) REFERENCES creacion.venta(id_venta)
+        fecha_emision DATE NOT NULL DEFAULT GETDATE(), -- Fecha de emisiÃ³n de la nota
     );
 END
 ELSE
