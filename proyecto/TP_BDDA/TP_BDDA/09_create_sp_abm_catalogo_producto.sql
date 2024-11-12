@@ -1,9 +1,9 @@
 USE Com2900G08
-go
-
+GO
 
 DROP PROCEDURE IF EXISTS abm_catalogo_producto.dar_alta
 GO
+
 CREATE PROCEDURE abm_catalogo_producto.dar_alta
 	@catalogo_par varchar(50)
 AS
@@ -20,9 +20,11 @@ BEGIN
 	ELSE
 		RAISERROR('Ya existe esta categoria', 16, 1)
 END
+GO
 
 DROP PROCEDURE IF EXISTS abm_catalogo_producto.dar_de_baja
 GO
+
 CREATE PROCEDURE abm_catalogo_producto.dar_de_baja
 	@catalogo_par varchar(50)
 AS
@@ -39,9 +41,11 @@ BEGIN
 	ELSE
 		RAISERROR('No existe esta categoria', 16, 1)
 END
+GO
 
 DROP PROCEDURE IF EXISTS abm_catalogo_producto.modificar
 GO
+
 CREATE PROCEDURE abm_catalogo_producto.modificar
 	@catalogo_par VARCHAR(50),
 	@aBuscar VARCHAR(50)
@@ -60,3 +64,4 @@ BEGIN
 	ELSE
 		RAISERROR('No existe esta categoria', 16, 1)
 END
+GO
