@@ -6,9 +6,6 @@ GO
 	EXEC abm_venta.dar_de_alta 'A','11-11-2024', '10:25:35', 'Member', 'Male', 'Efectivo', '123-45-002', 2, 34, 7
 	EXEC abm_venta.dar_de_alta 'A','11-11-2024', '10:25:35', 'Member', 'Male', 'Efectivo', '123-45-680',3, 2, 15
 
---DAR BAJA
-	EXEC abm_venta.dar_de_baja '123-45-680'
-
 --MODIFICAR
 	--TIPO FACTURA
 	EXEC abm_venta.modificar 'C', NULL, NULL, '123-45-002'

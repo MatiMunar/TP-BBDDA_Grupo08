@@ -9,7 +9,7 @@ CREATE PROCEDURE abm_producto.dar_de_alta
     @categoria_par VARCHAR(100) = NULL
 AS
 BEGIN
-    -- Verificar si el producto ya existe
+    -- Verificamos si el producto ya existe
     IF EXISTS (
         SELECT 1
         FROM creacion.producto
@@ -20,11 +20,10 @@ BEGIN
         RETURN;
     END
 
-    -- Declaración del ID del catálogo y la categoría
     DECLARE @id_catalogo INT;
     DECLARE @categoria VARCHAR(100);
 
-    -- Si la categoría es NULL, asignar 'otros' y el id_catalogo correspondiente
+    -- Si la categoría es NULL, le asignamos 'Sin categoria' y el id_catalogo correspondiente
     IF @categoria_par IS NULL
     BEGIN
         SET @categoria = 'Sin categoria';
@@ -34,14 +33,13 @@ BEGIN
     BEGIN
         SET @categoria = @categoria_par;
 
-        -- Verificar si la categoría existe en catalogo_producto
+        -- Verificamos si la categoría existe en catalogo_producto
         IF NOT EXISTS (
             SELECT 1
             FROM creacion.catalogo_producto
             WHERE tipo_catalogo = @categoria
         )
         BEGIN
-            -- Insertar la categoría en caso de que no exista y obtener el nuevo ID
             INSERT INTO creacion.catalogo_producto (tipo_catalogo)
             VALUES (@categoria);
 
@@ -49,14 +47,13 @@ BEGIN
         END
         ELSE
         BEGIN
-            -- Si la categoría ya existe, obtener el ID correspondiente
+            -- Si la categoría ya existe, obtenemos el ID
             SELECT @id_catalogo = id_catalogo_producto
             FROM creacion.catalogo_producto
             WHERE tipo_catalogo = @categoria;
         END
     END
 
-    -- Insertar el producto en la tabla producto con el ID de categoría
     INSERT INTO creacion.producto (nombre_producto, precio, categoria, id_catalogo)
     VALUES (@nombre_producto_par, @precio_par, @categoria, @id_catalogo);
 END;

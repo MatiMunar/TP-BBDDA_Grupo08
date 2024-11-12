@@ -62,7 +62,7 @@ BEGIN
 	INSERT creacion.nota_credito (id_factura, valor,fecha_emision) VALUES (@id_factura, @total, GETDATE())
 	
 	UPDATE DV
-    SET DV.estado_venta = 'Nota de Credito'
+    SET DV.estado_venta = 'Dado de baja'
     FROM creacion.detalle_venta DV
     WHERE id_detalle_venta = @id_dv
 	END

@@ -1,7 +1,6 @@
 USE Com2900G08
 GO
 
-
 --DAR ALTA
 	--FUNCIONA
 	EXEC abm_catalogo_producto.dar_alta 'Carniceria'
@@ -16,7 +15,7 @@ GO
 
 --MODIFICAR
 	--FUNCIONA
-	EXEC abm_catalogo_producto.modificar 'Almacenes','Almacen'
+	EXEC abm_catalogo_producto.modificar 'Almacenes','Almacen' -- Nuevo dato, dato a modificar
 	--FUNCIONA
 	EXEC abm_catalogo_producto.modificar 'Almacen','Almacenes'
 	--ERROR

@@ -56,7 +56,7 @@ END;
 GO
 
 
-DROP PROCEDURE IF EXISTS abm_emplado.dar_de_baja
+DROP PROCEDURE IF EXISTS abm_empleado.dar_de_baja
 GO
 
 CREATE PROCEDURE abm_empleado.dar_de_baja
