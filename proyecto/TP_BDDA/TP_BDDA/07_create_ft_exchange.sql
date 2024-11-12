@@ -21,7 +21,6 @@ BEGIN
     -- Extraer el valor de la tasa de cambio ARS del JSON
     SELECT @tasaDeCambio = JSON_VALUE(@ResponseText, '$.rates.ARS');
 
-    -- Liberar el objeto
     EXEC sp_OADestroy @Object;
 
     -- Retornar la tasa de cambio como DECIMAL

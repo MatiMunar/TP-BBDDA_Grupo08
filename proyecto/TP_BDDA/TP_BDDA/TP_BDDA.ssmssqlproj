@@ -22,119 +22,155 @@
     </LogicalFolder>
     <LogicalFolder Name="Queries" Type="0" Sorted="true">
       <Items>
-        <FileNode Name="create_configuration.sql">
+        <FileNode Name="00_create_database.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
-          <FullPath>create_configuration.sql</FullPath>
+          <FullPath>00_create_database.sql</FullPath>
         </FileNode>
-        <FileNode Name="create_database.sql">
+        <FileNode Name="01_create_configuration.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
-          <FullPath>create_database.sql</FullPath>
+          <FullPath>01_create_configuration.sql</FullPath>
         </FileNode>
-        <FileNode Name="create_ft_exchange.sql">
+        <FileNode Name="02_create_schema.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
-          <FullPath>create_ft_exchange.sql</FullPath>
+          <FullPath>02_create_schema.sql</FullPath>
         </FileNode>
-        <FileNode Name="create_key.sql">
+        <FileNode Name="03_create_key.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
-          <FullPath>create_key.sql</FullPath>
+          <FullPath>03_create_key.sql</FullPath>
         </FileNode>
-        <FileNode Name="create_rol.sql">
+        <FileNode Name="04_create_table.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
-          <FullPath>create_rol.sql</FullPath>
+          <FullPath>04_create_table.sql</FullPath>
         </FileNode>
-        <FileNode Name="create_schema.sql">
+        <FileNode Name="05_create_rol.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
-          <FullPath>create_schema.sql</FullPath>
+          <FullPath>05_create_rol.sql</FullPath>
         </FileNode>
-        <FileNode Name="create_sp.sql">
+        <FileNode Name="06_create_permissions.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
-          <FullPath>create_sp.sql</FullPath>
+          <FullPath>06_create_permissions.sql</FullPath>
         </FileNode>
-        <FileNode Name="create_sp_abm_catalogo_producto.sql">
+        <FileNode Name="07_create_ft_exchange.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
-          <FullPath>create_sp_abm_catalogo_producto.sql</FullPath>
+          <FullPath>07_create_ft_exchange.sql</FullPath>
         </FileNode>
-        <FileNode Name="create_sp_abm_empleado.sql">
+        <FileNode Name="08_create_sp_imports.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
-          <FullPath>create_sp_abm_empleado.sql</FullPath>
+          <FullPath>08_create_sp_imports.sql</FullPath>
         </FileNode>
-        <FileNode Name="create_sp_abm_producto.sql">
-          <AssociatedConnectionMoniker />
-          <AssociatedConnSrvName />
-          <AssociatedConnUserName />
-          <FullPath>create_sp_abm_producto.sql</FullPath>
-        </FileNode>
-        <FileNode Name="create_sp_abm_sucursal.sql">
-          <AssociatedConnectionMoniker />
-          <AssociatedConnSrvName />
-          <AssociatedConnUserName />
-          <FullPath>create_sp_abm_sucursal.sql</FullPath>
-        </FileNode>
-        <FileNode Name="create_sp_nota_credito.sql">
+        <FileNode Name="09_create_sp_abm_catalogo_producto.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
-          <FullPath>create_sp_nota_credito.sql</FullPath>
+          <FullPath>09_create_sp_abm_catalogo_producto.sql</FullPath>
         </FileNode>
-        <FileNode Name="create_table.sql">
+        <FileNode Name="10_create_sp_abm_empleado.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
-          <FullPath>create_table.sql</FullPath>
+          <FullPath>10_create_sp_abm_empleado.sql</FullPath>
+        </FileNode>
+        <FileNode Name="11_create_sp_abm_sucursal.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>11_create_sp_abm_sucursal.sql</FullPath>
+        </FileNode>
+        <FileNode Name="12_create_sp_abm_producto.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>12_create_sp_abm_producto.sql</FullPath>
+        </FileNode>
+        <FileNode Name="13_create_sp_nota_credito.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>13_create_sp_nota_credito.sql</FullPath>
+        </FileNode>
+        <FileNode Name="14_exec_sp_imports.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>14_exec_sp_imports.sql</FullPath>
+        </FileNode>
+        <FileNode Name="15_exec_abm_empleado.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>15_exec_abm_empleado.sql</FullPath>
+        </FileNode>
+        <FileNode Name="16_exec_abm_sucursal.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>16_exec_abm_sucursal.sql</FullPath>
+        </FileNode>
+        <FileNode Name="17_alter_role_member.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>17_alter_role_member.sql</FullPath>
+        </FileNode>
+        <FileNode Name="18_exec_sp_nota_credito.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>18_exec_sp_nota_credito.sql</FullPath>
+        </FileNode>
+        <FileNode Name="19_backup_semanal.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>19_backup_semanal.sql</FullPath>
+        </FileNode>
+        <FileNode Name="20_backup_diario.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>20_backup_diario.sql</FullPath>
+        </FileNode>
+        <FileNode Name="21_backup_hora.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>21_backup_hora.sql</FullPath>
+        </FileNode>
+        <FileNode Name="22_create_reportes.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>22_create_reportes.sql</FullPath>
+        </FileNode>
+        <FileNode Name="drop_database.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>drop_database.sql</FullPath>
         </FileNode>
         <FileNode Name="drop_table.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
           <FullPath>drop_table.sql</FullPath>
-        </FileNode>
-        <FileNode Name="exec_abm_empleado.sql">
-          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
-          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
-          <AssociatedConnUserName />
-          <FullPath>exec_abm_empleado.sql</FullPath>
-        </FileNode>
-        <FileNode Name="exec_abm_sucursal.sql">
-          <AssociatedConnectionMoniker />
-          <AssociatedConnSrvName />
-          <AssociatedConnUserName />
-          <FullPath>exec_abm_sucursal.sql</FullPath>
-        </FileNode>
-        <FileNode Name="exec_sp.sql">
-          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
-          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
-          <AssociatedConnUserName />
-          <FullPath>exec_sp.sql</FullPath>
-        </FileNode>
-        <FileNode Name="exec_sp_nota_credito.sql">
-          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
-          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
-          <AssociatedConnUserName />
-          <FullPath>exec_sp_nota_credito.sql</FullPath>
-        </FileNode>
-        <FileNode Name="permissions.sql">
-          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
-          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
-          <AssociatedConnUserName />
-          <FullPath>permissions.sql</FullPath>
         </FileNode>
       </Items>
     </LogicalFolder>

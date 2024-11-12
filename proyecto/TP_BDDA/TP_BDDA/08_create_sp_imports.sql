@@ -405,13 +405,23 @@ BEGIN
             precio_unitario DECIMAL(10, 2)
         );
 
+		DECLARE @tasaDeCambio DECIMAL(10,4);
+		SET @tasaDeCambio = insertar.obtenerTasaCambioUSD_ARS()
+		IF @tasaDeCambio IS NULL
+		BEGIN
+			RAISERROR('No se pudo obtener la tasa de cambio de USD a ARS.', 17, 1);
+			RETURN;
+		END;
+
+		PRINT 'La tasa de cambio USD a ARS es: ' + CAST(@tasaDeCambio AS NVARCHAR(20));
+
         -- Insertar datos en la tabla detalle_venta evitando duplicados
         INSERT INTO #temp_detalle_venta (id_venta, id_producto, cantidad, precio_unitario)
         SELECT 
             v.id_venta,
             p.id_producto,
             tv.Cantidad,
-            TRY_CAST(REPLACE(tv.Precio_Unitario, ',', '.') AS DECIMAL(10, 2))  -- Conversion a DECIMAL y manejo de coma
+            TRY_CAST(REPLACE(tv.Precio_Unitario, ',', '.') AS DECIMAL(10,2)) * CAST(@tasaDeCambio AS DECIMAL(10,4))  -- Conversion a DECIMAL y manejo de coma
         FROM #temp_ventas tv
         INNER JOIN creacion.venta v ON tv.ID_Factura = v.id_factura
         INNER JOIN creacion.producto p ON tv.Producto = p.nombre_producto
@@ -422,7 +432,7 @@ BEGIN
         );
 
         INSERT INTO creacion.detalle_venta (id_venta, id_producto, cantidad, precio_unitario)
-        SELECT id_venta, id_producto, cantidad, precio_unitario FROM #temp_detalle_venta;
+        SELECT id_venta, id_producto, cantidad, precio_unitario  FROM #temp_detalle_venta;
 
         -- Limpiar tablas temporales
         DROP TABLE #temp_ventas;

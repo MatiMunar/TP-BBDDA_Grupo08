@@ -99,6 +99,7 @@ BEGIN
         id_producto INT,
         cantidad INT NOT NULL,
         precio_unitario DECIMAL(10, 2) NOT NULL,
+		estado_venta CHAR(20) DEFAULT 'Pagada',
         FOREIGN KEY (id_venta) REFERENCES Com2900G08.creacion.venta(id_venta),
         FOREIGN KEY (id_producto) REFERENCES Com2900G08.creacion.producto(id_producto)
     );
@@ -111,7 +112,7 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'nota_credito' AND schema_i
 BEGIN
     CREATE TABLE creacion.nota_credito (
         id_nota_credito INT PRIMARY KEY IDENTITY(1,1),
-	id_factura VARCHAR(50),
+		id_factura CHAR(30),
         valor DECIMAL(10, 2) NOT NULL,
         fecha_emision DATE NOT NULL DEFAULT GETDATE(), -- Fecha de emisión de la nota
     );

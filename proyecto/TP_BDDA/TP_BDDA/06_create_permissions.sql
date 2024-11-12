@@ -7,3 +7,5 @@ END;
 ELSE
 	RAISERROR('No existe la tabla nota_credito', 16, 1);
 GO
+
+

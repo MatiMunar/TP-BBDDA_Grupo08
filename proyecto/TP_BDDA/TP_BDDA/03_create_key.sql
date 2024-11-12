@@ -2,7 +2,7 @@ USE Com2900G08;
 GO
 
 -- Creamos una clave maestra si no existe
-IF NOT EXISTS (SELECT * FROM sys.symmetric_keys WHERE name = 'ClaveMaestra')
+IF NOT EXISTS (SELECT * FROM sys.symmetric_keys WHERE name = '##MS_DatabaseMasterKey##')
 BEGIN
     CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'claveMaestra123';
 END;
