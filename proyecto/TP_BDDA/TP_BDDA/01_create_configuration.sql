@@ -12,3 +12,15 @@ GO
 
 EXEC master.dbo.sp_MSSet_oledb_prop N'Microsoft.ACE.OLEDB.16.0', N'DynamicParameters', 1
 GO
+
+EXEC master.dbo.sp_configure 'xp_cmdshell', 1; -- Para la API
+RECONFIGURE;
+GO
+
+EXEC master.dbo.sp_configure 'Ole Automation Procedures', 1;
+RECONFIGURE;
+GO
+
+EXEC master.dbo.sp_configure 'Agent XPs', 1; -- Para automatizar los backups
+RECONFIGURE;
+GO
