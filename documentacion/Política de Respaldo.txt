@@ -1,0 +1,29 @@
+Política de Respaldo de la Base de Datos Com2900G08
+
+El esquema elegido se basa en un enfoque de modelo de recuperación FULL. Este modelo permite la recuperación completa de los datos hasta el punto de falla más reciente, lo cual es esencial para bases de datos que almacenan información de alto valor, como las ventas diarias.
+
+Backup Completo Inicial:
+•	Ruta: D:\backups\tp_BDDA\Com2900G08_Full_Initial.bak
+•	Backup completo inicial para establecer un punto de restauración antes de habilitar los logs de transacciones.
+
+Backup del Log de Transacciones por Hora:
+•	Periodicidad: Cada hora.
+•	Ruta: D:\backups\tp_BDDA\Com2900G08_Log.bak
+•	Este respaldo captura todas las transacciones que se han realizado desde el último backup del log y permite una recuperación más granular de los datos.
+•	Al realizar un backup de logs cada hora, se garantiza la capacidad de restaurar la base de datos hasta un punto específico en el tiempo, esta estrategia es esencial en ambientes donde la pérdida de transacciones recientes podría impactar significativamente en las operaciones de negocio.
+•	Este Backup nos permite recuperar los datos hasta un momento específico con pérdidas mínimas, además de proteger la base de datos de fallos inesperados durante el día.
+
+Backup Diferencial Diario:
+•	Horario: 02:00 AM
+•	Periodicidad: Cada 24 horas.
+•	Ruta: D:\backups\tp_BDDA\Com2900G08_Diff.bak
+•	Captura los cambios realizados desde el último backup completo.
+•	Proporciona un método intermedio entre los backups completos y los logs de transacciones. 
+•	Al ser éste un Backup diferencial, es más rápido de realizar que los completos y más eficientes en espacio.
+
+Backup Completo Semanal:
+•	Horario: 04:00 AM
+•	Periodicidad: Cada domingo
+•	Ruta: D:\backups\tp_BDDA\Com2900G08_Full.bak
+•	Copia completa de la base de datos en su estado actual.
+•	Nos asegura una copia de toda la base de datos, proporcionando un punto de referencia sólido para los otros tipos de respaldo (diferenciales y logs) y nos permite restaurar rápidamente en caso de un fallo mayor. 
