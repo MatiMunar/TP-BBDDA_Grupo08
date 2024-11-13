@@ -34,41 +34,52 @@ BEGIN
 
 	EXEC sp_executesql @sql;
 
-	-- Obtenemos la tasa de cambio de USD a ARS
-	DECLARE @tasaDeCambio DECIMAL(10,4);
-    SET @tasaDeCambio = insertar.obtenerTasaCambioUSD_ARS()
-	IF @tasaDeCambio IS NULL
-	BEGIN
-		RAISERROR('No se pudo obtener la tasa de cambio de USD a ARS.', 17, 1);
-		RETURN;
-	END;
-
-	PRINT 'La tasa de cambio USD a ARS es: ' + CAST(@tasaDeCambio AS NVARCHAR(20));
-
-    -- Insertar los datos en la tabla producto con conversión condicional
-	DECLARE @sqlAux NVARCHAR(MAX);
-	SET @sqlAux = N'
-    INSERT INTO creacion.producto (nombre_producto, precio, categoria, id_catalogo)
+    -- Creamos una tabla temporal con la fila numerada
+    WITH CTE AS (
         SELECT 
-            t.name,
-            TRY_CAST(t.price AS DECIMAL(8,2)) * CAST(@tasaDeCambio AS DECIMAL(10,4)) AS Price, -- Convierte a DECIMAL, o NULL si no es posible
+            t.id,
             t.category,
-            ca.id_catalogo_producto
+            t.name,
+            TRY_CAST(t.price AS DECIMAL(8,2)) AS Price, -- Convierte a DECIMAL, o NULL si no es posible
+            t.reference_price,
+            t.reference_unit,
+            t.date,
+            ROW_NUMBER() OVER (PARTITION BY TRIM(UPPER(t.name)) ORDER BY t.id) AS RowNum
+        FROM #temp_catalogo t
+    )
+    -- Eliminar los duplicados manteniendo solo el primer producto por nombre y categoría
+    DELETE FROM #temp_catalogo
+    WHERE id IN (
+        SELECT id
+        FROM CTE
+        WHERE RowNum > 1
+    );
+
+    -- Insertar los datos únicos en la tabla producto
+    DECLARE @sqlAux NVARCHAR(MAX);
+    SET @sqlAux = N'
+    INSERT INTO creacion.producto (nombre_producto, precio, categoria, id_catalogo, tipo)
+        SELECT 
+            TRIM(t.name),  -- Eliminar espacios al principio y al final
+            t.Price,
+            TRIM(t.category),  -- Eliminar espacios al principio y al final
+            ca.id_catalogo_producto,
+            ''Nacional''  -- Hardcodeado como Nacional
         FROM #temp_catalogo t
         INNER JOIN OPENROWSET(
             ''Microsoft.ACE.OLEDB.16.0'',
             ''Excel 12.0;HDR=YES;Database=' + @rutaArchComplement + ''',
             ''SELECT * FROM [Clasificacion productos$]''
-        ) AS c ON t.category = c.Producto
+        ) AS c ON TRIM(t.category) = TRIM(c.Producto)  -- Eliminar espacios de la categoría también
         INNER JOIN creacion.catalogo_producto ca ON ca.tipo_catalogo = c.[Línea de producto]
         WHERE NOT EXISTS (
             SELECT 1
             FROM creacion.producto p
-            WHERE p.nombre_producto = t.name
-              AND p.categoria = t.category
+            WHERE TRIM(UPPER(p.nombre_producto)) = TRIM(UPPER(t.name))  -- Comparar sin distinguir entre mayúsculas y minúsculas
+              AND TRIM(UPPER(p.categoria)) = TRIM(UPPER(t.category))  -- Comparar sin distinguir entre mayúsculas y minúsculas
         )';
 
-		EXEC sp_executesql @sqlAux, N'@tasaDeCambio DECIMAL(10,4)', @tasaDeCambio;
+	EXEC sp_executesql @sqlAux;
 
     -- Limpiar la tabla temporal
     DROP TABLE #temp_catalogo;
@@ -76,6 +87,7 @@ BEGIN
     PRINT 'Datos insertados correctamente en la tabla producto.';
 END;
 GO
+
 DROP PROCEDURE IF EXISTS insertar.datos_electronic_accessories;
 GO
 CREATE PROCEDURE insertar.datos_electronic_accessories
@@ -106,23 +118,13 @@ BEGIN
 
     EXEC sp_executesql @sql;
 
-	-- Obtenemos la tasa de cambio de USD a ARS
-	DECLARE @tasaDeCambio DECIMAL(10,4);
-    SET @tasaDeCambio = insertar.obtenerTasaCambioUSD_ARS()
-	IF @tasaDeCambio IS NULL
-	BEGIN
-		RAISERROR('No se pudo obtener la tasa de cambio de USD a ARS.', 17, 1);
-		RETURN;
-	END;
-
-	PRINT 'La tasa de cambio USD a ARS es: ' + CAST(@tasaDeCambio AS NVARCHAR(20));
-
-    INSERT INTO creacion.producto (nombre_producto, precio, categoria, id_catalogo)
+    INSERT INTO creacion.producto (nombre_producto, precio, categoria, id_catalogo, tipo)
         SELECT 
             e.Product,
-            TRY_CAST(REPLACE([Precio Unitario en dolares], ',', '.') AS DECIMAL(8,2)) * CAST(@tasaDeCambio AS DECIMAL(10,4)) AS Price,
+            TRY_CAST(REPLACE([Precio Unitario en dolares], ',', '.') AS DECIMAL(8,2)) AS Price,
             'Electronic accessories',  -- Categoría fija como texto
-            ca.id_catalogo_producto
+            ca.id_catalogo_producto,
+			'Nacional' AS tipo
         FROM #temp_electronic_accessories e
         INNER JOIN creacion.catalogo_producto ca ON ca.tipo_catalogo = 'Electronic accessories'
         WHERE NOT EXISTS (
@@ -178,12 +180,13 @@ BEGIN
 
 	PRINT 'La tasa de cambio USD a ARS es: ' + CAST(@tasaDeCambio AS NVARCHAR(20));
 
-    INSERT INTO creacion.producto (nombre_producto, precio, categoria, id_catalogo)
+    INSERT INTO creacion.producto (nombre_producto, precio, categoria, id_catalogo, tipo)
     SELECT 
         t.NombreProducto,
         TRY_CAST(REPLACE(t.PrecioUnidad, ',', '.') AS DECIMAL(10,2)) * CAST(@tasaDeCambio AS DECIMAL(10,4)) AS Price,
         t.Categoría,
-		c.id_catalogo_producto
+		c.id_catalogo_producto,
+		'Importado'
     FROM #temp_productos_importados t
 	LEFT JOIN creacion.catalogo_producto c ON c.tipo_catalogo = t.Categoría
     WHERE NOT EXISTS (
@@ -338,7 +341,7 @@ GO
 DROP PROCEDURE IF EXISTS insertar.ventas_registradas;
 GO
 CREATE PROCEDURE insertar.ventas_registradas
-	@rutaArchivo NVARCHAR(255)
+    @rutaArchivo NVARCHAR(255)
 AS
 BEGIN
     BEGIN TRY
@@ -371,74 +374,126 @@ BEGIN
             FORMAT = ''CSV'',
             FIELDTERMINATOR = '';'',      
             ROWTERMINATOR = ''0x0D0A'',     
-            FIRSTROW = 2,                -- Saltar la fila de encabezado
+            FIRSTROW = 2,                
             CODEPAGE = ''65001''
         )';
         EXEC sp_executesql @sql;
 
-        -- Insertar datos en la tabla venta evitando duplicados
-        INSERT INTO creacion.venta (id_factura, tipo_factura, fecha, hora, medio_pago, id_empleado, id_sucursal, tipo_cliente, genero)
+        -- Crear tabla temporal para almacenar los IDs de las ventas insertadas junto con fecha y hora
+        CREATE TABLE #ventas_insertadas (
+            id_venta INT,
+            fecha DATE,
+            hora TIME
+        );
+
+        -- Insertar datos en la tabla venta y capturar solo los IDs generados en #ventas_insertadas
+        INSERT INTO creacion.venta (fecha, hora, id_empleado, id_sucursal, monto_total)
+        OUTPUT INSERTED.id_venta, INSERTED.fecha, INSERTED.hora INTO #ventas_insertadas(id_venta, fecha, hora)
         SELECT 
-            tv.ID_Factura,
-            tv.Tipo_de_Factura,
-            CAST(tv.Fecha AS DATE),
-            CAST(tv.Hora AS TIME),
-            tv.Medio_de_Pago,
+            tv.Fecha,
+            tv.Hora,
             emp.id_empleado,
             suc.id_sucursal,
-			tv.Tipo_de_Cliente,
-			tv.Genero
+            0 -- Inicialmente el monto total es 0
         FROM #temp_ventas tv
-        LEFT JOIN creacion.empleado emp ON tv.Empleado = emp.legajo
-        LEFT JOIN creacion.sucursal suc ON tv.Ciudad = suc.ciudad
+        INNER JOIN creacion.empleado emp ON tv.Empleado = emp.legajo
+        INNER JOIN creacion.sucursal suc ON tv.Ciudad = suc.ciudad
+		INNER JOIN creacion.producto p ON tv.Producto = p.nombre_producto
         WHERE NOT EXISTS (
             SELECT 1 
             FROM creacion.venta v
-            WHERE v.id_factura = tv.ID_Factura
-        );
+            WHERE v.fecha = tv.Fecha
+              AND v.hora = tv.Hora
+              AND emp.legajo = tv.Empleado
+              AND suc.ciudad = tv.Ciudad
+        )
 
-        -- Crear tabla temporal para detalles de venta
-        CREATE TABLE #temp_detalle_venta (
-            id_venta INT,
-            id_producto INT,
-            cantidad INT,
-            precio_unitario DECIMAL(10, 2)
-        );
+        -- Obtener tasa de cambio de USD a ARS
+        DECLARE @tasaDeCambio DECIMAL(10,4);
+        SET @tasaDeCambio = insertar.obtenerTasaCambioUSD_ARS();
+        IF @tasaDeCambio IS NULL
+        BEGIN
+            RAISERROR('No se pudo obtener la tasa de cambio de USD a ARS.', 17, 1);
+            RETURN;
+        END;
 
-		DECLARE @tasaDeCambio DECIMAL(10,4);
-		SET @tasaDeCambio = insertar.obtenerTasaCambioUSD_ARS()
-		IF @tasaDeCambio IS NULL
-		BEGIN
-			RAISERROR('No se pudo obtener la tasa de cambio de USD a ARS.', 17, 1);
-			RETURN;
-		END;
+        PRINT 'La tasa de cambio USD a ARS es: ' + CAST(@tasaDeCambio AS NVARCHAR(20));
 
-		PRINT 'La tasa de cambio USD a ARS es: ' + CAST(@tasaDeCambio AS NVARCHAR(20));
-
-        -- Insertar datos en la tabla detalle_venta evitando duplicados
-        INSERT INTO #temp_detalle_venta (id_venta, id_producto, cantidad, precio_unitario)
-        SELECT 
-            v.id_venta,
+        -- Insertar detalles de la venta en la tabla detalle_venta utilizando los IDs capturados en #ventas_insertadas
+        INSERT INTO creacion.detalle_venta (id_venta, id_producto, cantidad, precio_unitario, subtotal)
+        SELECT DISTINCT
+            vi.id_venta,
             p.id_producto,
             tv.Cantidad,
-            TRY_CAST(REPLACE(tv.Precio_Unitario, ',', '.') AS DECIMAL(10,2)) * CAST(@tasaDeCambio AS DECIMAL(10,4))  -- Conversion a DECIMAL y manejo de coma
+            CASE
+                WHEN p.tipo = 'Importado' THEN TRY_CAST(REPLACE(tv.Precio_Unitario, ',', '.') AS DECIMAL(10,2)) * @tasaDeCambio
+                ELSE TRY_CAST(REPLACE(tv.Precio_Unitario, ',', '.') AS DECIMAL(10,2))
+            END,
+            CASE
+                WHEN p.tipo = 'Importado' THEN (TRY_CAST(REPLACE(tv.Precio_Unitario, ',', '.') AS DECIMAL(10,2)) * @tasaDeCambio) * tv.Cantidad
+                ELSE (TRY_CAST(REPLACE(tv.Precio_Unitario, ',', '.') AS DECIMAL(10,2)) * tv.Cantidad)
+            END
         FROM #temp_ventas tv
-        INNER JOIN creacion.venta v ON tv.ID_Factura = v.id_factura
         INNER JOIN creacion.producto p ON tv.Producto = p.nombre_producto
-        WHERE NOT EXISTS (
-            SELECT 1 
-            FROM creacion.detalle_venta dv
-            WHERE dv.id_venta = v.id_venta AND dv.id_producto = p.id_producto
-        );
+        INNER JOIN #ventas_insertadas vi ON tv.Fecha = vi.fecha AND tv.Hora = vi.hora;
 
-        INSERT INTO creacion.detalle_venta (id_venta, id_producto, cantidad, precio_unitario)
-        SELECT id_venta, id_producto, cantidad, precio_unitario  FROM #temp_detalle_venta;
+        -- Calcular monto total en la tabla de ventas y actualizar
+        UPDATE v
+        SET v.monto_total = (SELECT SUM(dv.subtotal) * 1.21
+                             FROM creacion.detalle_venta dv
+                             WHERE dv.id_venta = v.id_venta)
+        FROM creacion.venta v
+        INNER JOIN #ventas_insertadas vi ON v.id_venta = vi.id_venta;
+
+        -- Insertar factura relacionada con la venta usando los IDs capturados en #ventas_insertadas
+        INSERT INTO creacion.factura (tipo_factura, numero_factura, IVA, subtotal_sin_IVA, monto_total_con_IVA, cuit_cliente, id_detalle_venta, fecha_emision)
+		SELECT 
+			tv.Tipo_de_Factura,
+			tv.ID_Factura,
+			1.21,
+			SUM(v.monto_total / 1.21) AS subtotal_sin_IVA,  -- Subtotal sin IVA sumado por factura
+			SUM(v.monto_total) AS monto_total_con_IVA,      -- Total con IVA sumado por factura
+			'hardcodeado',
+			dv.id_detalle_venta,
+			vi.fecha
+		FROM #temp_ventas tv
+		INNER JOIN #ventas_insertadas vi ON tv.Fecha = vi.fecha AND tv.Hora = vi.hora
+		INNER JOIN creacion.venta v ON v.id_venta = vi.id_venta
+		INNER JOIN creacion.detalle_venta dv ON dv.id_venta = v.id_venta
+		WHERE NOT EXISTS ( 
+			SELECT 1 FROM creacion.factura f
+			WHERE f.numero_factura = tv.ID_Factura
+		)
+		GROUP BY 
+			tv.Tipo_de_Factura,
+			tv.ID_Factura,
+			vi.fecha,
+			dv.id_detalle_venta;
+
+        -- Insertar pago asociado a la factura usando los IDs capturados en #ventas_insertadas
+        INSERT INTO creacion.pago (id_factura, monto, fecha_pago, hora_pago)
+        SELECT 
+            f.id_factura,
+            v.monto_total,
+            vi.fecha,
+            vi.hora
+        FROM #temp_ventas tv
+        INNER JOIN #ventas_insertadas vi ON tv.Fecha = vi.fecha AND tv.Hora = vi.hora
+        INNER JOIN creacion.venta v ON vi.id_venta = v.id_venta
+        INNER JOIN creacion.factura f ON f.numero_factura = tv.ID_Factura
+        WHERE tv.Identificador_de_Pago IS NOT NULL;
+
+        -- Insertar medio de pago si no existe
+        INSERT INTO creacion.medio_de_pago (tipo_medio_pago)
+        SELECT DISTINCT tv.Medio_de_Pago
+        FROM #temp_ventas tv
+        WHERE NOT EXISTS (SELECT 1 FROM creacion.medio_de_pago m WHERE tv.Medio_de_Pago = m.tipo_medio_pago);
 
         -- Limpiar tablas temporales
         DROP TABLE #temp_ventas;
-        DROP TABLE #temp_detalle_venta;
+        DROP TABLE #ventas_insertadas;
 
-        COMMIT TRANSACTION;  
+        COMMIT TRANSACTION;
         PRINT 'Datos de ventas cargados correctamente.';
     END TRY
     BEGIN CATCH
@@ -447,7 +502,8 @@ BEGIN
     END CATCH
 END;
 GO
-DROP PROCEDURE IF EXISTS insertar.actualizar_categoria
+
+DROP PROCEDURE IF EXISTS insertar.actualizar_categoria;
 GO
 CREATE PROCEDURE insertar.actualizar_categoria
 AS

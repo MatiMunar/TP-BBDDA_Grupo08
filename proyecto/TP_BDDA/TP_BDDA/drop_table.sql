@@ -1,10 +1,13 @@
-USE Com2900G08
+USE Com2900G08;
 GO
 
-DROP TABLE creacion.nota_credito
-DROP TABLE creacion.detalle_venta
-DROP TABLE creacion.venta
-DROP TABLE creacion.producto
-DROP TABLE creacion.catalogo_producto
-DROP TABLE creacion.empleado
-DROP TABLE creacion.sucursal
+DROP TABLE IF EXISTS creacion.pago;
+DROP TABLE IF EXISTS creacion.nota_credito;
+DROP TABLE IF EXISTS creacion.factura;
+DROP TABLE IF EXISTS creacion.detalle_venta;
+DROP TABLE IF EXISTS creacion.venta;
+DROP TABLE IF EXISTS creacion.producto;
+DROP TABLE IF EXISTS creacion.medio_de_pago;
+DROP TABLE IF EXISTS creacion.empleado;
+DROP TABLE IF EXISTS creacion.catalogo_producto;
+DROP TABLE IF EXISTS creacion.sucursal;

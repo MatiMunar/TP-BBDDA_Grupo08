@@ -29,3 +29,6 @@ SET @Query = 'BACKUP LOG Com2900G08 ' +
              'TO DISK = ''' + @RutaBase + 'Com2900G08_Log.bak'' ' +
              'WITH INIT, NAME = ''Backup Log de Transacciones de Com2900G08'';';
 EXEC sp_executesql @Query;
+
+use Com2900G08
+select * from creacion.empleado
