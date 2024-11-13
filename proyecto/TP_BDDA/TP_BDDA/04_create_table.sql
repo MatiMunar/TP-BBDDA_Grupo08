@@ -91,11 +91,12 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'detalle_venta' AND schema_
 BEGIN
     CREATE TABLE creacion.detalle_venta (
         id_detalle_venta INT IDENTITY(1,1) PRIMARY KEY,
-        id_venta INT NOT NULL,
+        id_venta INT,
         id_producto INT NOT NULL,
         cantidad INT NOT NULL,
         precio_unitario DECIMAL(10, 2) NOT NULL,
-        subtotal DECIMAL(10, 2) NOT NULL
+        subtotal DECIMAL(10, 2) NOT NULL,
+		numero_factura CHAR(30) NOT NULL
         FOREIGN KEY (id_venta) REFERENCES creacion.venta(id_venta),
         FOREIGN KEY (id_producto) REFERENCES creacion.producto(id_producto)
     );
@@ -109,15 +110,13 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'factura' AND schema_id = S
 BEGIN
     CREATE TABLE creacion.factura (
         id_factura INT IDENTITY(1,1) PRIMARY KEY,
-        id_detalle_venta INT,
         tipo_factura CHAR(5),
 		numero_factura CHAR(30) NOT NULL,
         IVA DECIMAL(3,2) DEFAULT 1.21,
         fecha_emision DATE DEFAULT GETDATE(),
         subtotal_sin_IVA DECIMAL(10,2),
         monto_total_con_IVA DECIMAL(10,2),
-        cuit_cliente VARCHAR(13),
-        FOREIGN KEY (id_detalle_venta) REFERENCES creacion.detalle_venta(id_detalle_venta)
+        cuit VARCHAR(13)
     );
 END
 ELSE
@@ -160,7 +159,9 @@ BEGIN
         monto DECIMAL(10,2),
         fecha_pago DATE,
         hora_pago TIME,
-        FOREIGN KEY (id_factura) REFERENCES creacion.factura(id_factura)
+		id_medio_pago INT,
+        FOREIGN KEY (id_factura) REFERENCES creacion.factura(id_factura),
+		FOREIGN KEY (id_medio_pago) REFERENCES creacion.medio_de_pago(id_medio_pago)
     );
 END
 ELSE
