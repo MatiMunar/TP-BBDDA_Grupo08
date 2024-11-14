@@ -487,7 +487,7 @@ BEGIN
         );
 
         -- Paso 5: Insertamos facturas asociadas a cada venta
-        INSERT INTO creacion.factura (tipo_factura, numero_factura, IVA, subtotal_sin_IVA, monto_total_con_IVA, cuit, fecha_emision)
+        INSERT INTO creacion.factura (tipo_factura, numero_factura, IVA, subtotal_sin_IVA, monto_total_con_IVA,fecha_emision, CUIT, nombre_supermercado)
         SELECT 
             tv.Tipo_de_Factura,
             tv.ID_Factura,
@@ -500,11 +500,13 @@ BEGIN
                     WHEN p.tipo = 'Importado' THEN TRY_CAST(REPLACE(tv.Precio_Unitario, ',', '.') AS DECIMAL(10,2)) * @tasaDeCambio * tv.Cantidad
                     ELSE TRY_CAST(REPLACE(tv.Precio_Unitario, ',', '.') AS DECIMAL(10,2)) * tv.Cantidad
                 END) * 1.21 AS monto_total_con_IVA,
-            'hardcodeado', -- Esto lo tenemos que cambiar
-            MIN(tv.Fecha)
+            MIN(tv.Fecha),
+			sm.CUIT,
+			sm.nombre_supermercado
         FROM #temp_ventas tv
         INNER JOIN creacion.producto p ON tv.Producto = p.nombre_producto
-        GROUP BY tv.Tipo_de_Factura, tv.ID_Factura;
+		CROSS JOIN creacion.supermercado sm
+        GROUP BY tv.Tipo_de_Factura, tv.ID_Factura, sm.CUIT, sm.nombre_supermercado;
 
         -- Paso 6: Insertamos en medio_de_pago
         INSERT INTO creacion.medio_de_pago (tipo_medio_pago)

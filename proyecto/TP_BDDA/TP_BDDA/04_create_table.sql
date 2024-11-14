@@ -77,7 +77,8 @@ BEGIN
         id_empleado INT,
         fecha DATE NOT NULL,
         hora TIME NOT NULL,
-        monto_total DECIMAL(10, 2)
+        monto_total DECIMAL(10, 2),
+		estado_venta CHAR(20) DEFAULT 'Pagada',
         FOREIGN KEY (id_empleado) REFERENCES creacion.empleado(id_empleado),
         FOREIGN KEY (id_sucursal) REFERENCES creacion.sucursal(id_sucursal)
     );
@@ -105,6 +106,19 @@ ELSE
     RAISERROR('Ya existe la tabla "detalle_venta"', 16, 1);
 GO
 
+-- Crear la tabla supermercado
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'supermercado' AND schema_id = SCHEMA_ID('creacion'))
+BEGIN
+    CREATE TABLE creacion.supermercado (
+        CUIT CHAR(15),
+        nombre_supermercado CHAR(30),
+        CONSTRAINT PK_Supermercado PRIMARY KEY (cuit, nombre_supermercado)
+    );
+END
+ELSE
+    RAISERROR('Ya existe la tabla "supermercado"', 16, 1);
+GO
+
 -- Tabla factura
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'factura' AND schema_id = SCHEMA_ID('creacion'))
 BEGIN
@@ -116,7 +130,9 @@ BEGIN
         fecha_emision DATE DEFAULT GETDATE(),
         subtotal_sin_IVA DECIMAL(10,2),
         monto_total_con_IVA DECIMAL(10,2),
-        cuit VARCHAR(13)
+        CUIT CHAR(15),
+        nombre_supermercado CHAR(30),
+        FOREIGN KEY (CUIT, nombre_supermercado) REFERENCES creacion.supermercado(CUIT, nombre_supermercado)
     );
 END
 ELSE
