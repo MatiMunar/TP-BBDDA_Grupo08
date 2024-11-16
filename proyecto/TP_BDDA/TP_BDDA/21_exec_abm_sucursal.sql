@@ -9,19 +9,19 @@ GO
 
 --ACTUALIZA
 	--Ciudad
-	EXEC abm_sucursal.modificar NULL,'Moron',NULL,NULL,NULL,'Haedo' -- Ciudad, Sucursal, Dirección, Horario, Teléfono, Sucursal a buscar
+	EXEC abm_sucursal.modificar @ciudad_par = NULL, @sucursal_par = 'Moron', @direccion_par = NULL, @horario_par = NULL, @telefono_par = NULL, @aBuscar = 'Haedo'
 	--Direccion
-	EXEC abm_sucursal.modificar NULL,NULL,'Fasola 1256',NULL,NULL,'Haedo'
+	EXEC abm_sucursal.modificar @ciudad_par = NULL, @sucursal_par = NULL, @direccion_par = 'Fasola 1256', @horario_par = NULL, @telefono_par = NULL, @aBuscar ='Haedo'
 	--Horario
-	EXEC abm_sucursal.modificar NULL,NULL,NULL,'L a V 8 a.m.-8 p.m. S y D 10 a.m.-2 p.m',NULL,'Haedo'
+	EXEC abm_sucursal.modificar @ciudad_par = NULL,@sucursal_par = NULL, @direccion_par = NULL, @horario_par = 'L a V 8 a.m.-8 p.m. S y D 10 a.m.-2 p.m', @telefono_par = NULL, @aBuscar = 'Haedo'
 	--Telefono
-	EXEC abm_sucursal.modificar NULL,NULL,NULL,NULL,'1234-5678','Haedo'
+	EXEC abm_sucursal.modificar @ciudad_par = NULL, @sucursal_par = NULL, @direccion_par = NULL,  @horario_par = NULL,  @telefono_par = '1234-5678', @aBuscar = 'Haedo'
 	--ERROR
-	EXEC abm_sucursal.modificar NULL,NULL,NULL,NULL,'123456788','Haedo'
+	EXEC abm_sucursal.modificar @ciudad_par = NULL, @sucursal_par = NULL, @direccion_par = NULL, @horario_par = NULL, @telefono_par = '123456788', @aBuscar = 'Haedo'
 
 --DAR BAJA
 	--FUNCIONA
-	EXEC abm_sucursal.dar_baja 'Haedo'
+	EXEC abm_sucursal.dar_baja @ciudad_par = 'Haedo'
 	--ERROR
-	EXEC abm_sucursal.dar_baja 'Moron'
+	EXEC abm_sucursal.dar_baja @ciudad_par = 'Moron'
 
