@@ -97,7 +97,7 @@ BEGIN
         cantidad INT NOT NULL,
         precio_unitario DECIMAL(10, 2) NOT NULL,
         subtotal DECIMAL(10, 2) NOT NULL,
-		numero_factura CHAR(30) NOT NULL
+		numero_factura CHAR(30),
         FOREIGN KEY (id_venta) REFERENCES creacion.venta(id_venta),
         FOREIGN KEY (id_producto) REFERENCES creacion.producto(id_producto)
     );

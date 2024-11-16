@@ -64,3 +64,11 @@ END
 ELSE
 	RAISERROR('Ya existe el esquema "abm_producto"', 16, 1);
 GO
+
+IF NOT EXISTS (SELECT name FROM sys.schemas	WHERE name = 'utilitarias')
+BEGIN
+	EXEC('CREATE SCHEMA utilitarias')
+END
+ELSE
+	RAISERROR('Ya existe el esquema "utilitarias"', 16, 1);
+GO

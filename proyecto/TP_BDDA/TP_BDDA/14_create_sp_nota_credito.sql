@@ -34,6 +34,14 @@ BEGIN
             RETURN;
         END;
 
+		-- Verificamos si el valor pasado por parametro es positivo
+		IF @valor <= 0
+		BEGIN
+			RAISERROR('El valor pasado por parametro debe ser mayor a 0', 16, 1);
+			ROLLBACK TRANSACTION;
+			RETURN;
+		END;
+
         -- Verificamos si ya existe una nota de crédito para esa factura
         IF EXISTS (SELECT 1 FROM creacion.nota_credito WHERE id_factura = @id_factura)
         BEGIN
@@ -54,6 +62,21 @@ BEGIN
         IF @estado_venta <> 'Pagada'
         BEGIN
             RAISERROR('Solo se pueden emitir notas de crédito para ventas pagadas.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END;
+
+        -- Calculamos el monto total de la venta asociada
+        DECLARE @monto_total DECIMAL(10, 2);
+        SELECT @monto_total = v.monto_total
+        FROM creacion.detalle_venta dv
+        INNER JOIN creacion.venta v ON dv.id_venta = v.id_venta
+        WHERE dv.numero_factura = @numero_factura;
+
+        -- Verificamos que el valor de la nota de crédito no exceda el monto total de la venta
+        IF @valor > @monto_total
+        BEGIN
+            RAISERROR('El valor de la nota de crédito no puede exceder el monto total de la venta.', 16, 1);
             ROLLBACK TRANSACTION;
             RETURN;
         END;

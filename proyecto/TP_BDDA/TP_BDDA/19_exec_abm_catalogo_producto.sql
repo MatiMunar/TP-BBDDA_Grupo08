@@ -3,20 +3,20 @@ GO
 
 --DAR ALTA
 	--FUNCIONA
-	EXEC abm_catalogo_producto.dar_alta 'Carniceria'
+	EXEC abm_catalogo_producto.dar_alta @catalogo_par = 'Carniceria'
 	--ERROR
-	EXEC abm_catalogo_producto.dar_alta 'Almacen'
+	EXEC abm_catalogo_producto.dar_alta @catalogo_par = 'Almacen'
 
 --DAR BAJA
 	--FUNCIONA
-	EXEC abm_catalogo_producto.dar_de_baja 'Carniceria'
+	EXEC abm_catalogo_producto.dar_de_baja @catalogo_par = 'Carniceria'
 	--ERROR
-	EXEC abm_catalogo_producto.dar_de_baja 'Carnieria'
+	EXEC abm_catalogo_producto.dar_de_baja @catalogo_par = 'Carnieria'
 
 --MODIFICAR
 	--FUNCIONA
-	EXEC abm_catalogo_producto.modificar 'Almacenes','Almacen' -- Nuevo dato, dato a modificar
+	EXEC abm_catalogo_producto.modificar @catalogo_par = 'Almacenes', @aBuscar = 'Almacen'
 	--FUNCIONA
-	EXEC abm_catalogo_producto.modificar 'Almacen','Almacenes'
+	EXEC abm_catalogo_producto.modificar @catalogo_par = 'Almacen', @aBuscar = 'Almacenes'
 	--ERROR
-	EXEC abm_catalogo_producto.modificar 'Almacen','Almacenes'
+	EXEC abm_catalogo_producto.modificar @catalogo_par = 'Almacen', @aBuscar = 'Almacenes'

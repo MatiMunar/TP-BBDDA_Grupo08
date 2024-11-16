@@ -64,11 +64,11 @@
           <AssociatedConnUserName />
           <FullPath>06_create_permissions.sql</FullPath>
         </FileNode>
-        <FileNode Name="07_create_ft_exchange.sql">
+        <FileNode Name="07_create_utilidades.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
-          <FullPath>07_create_ft_exchange.sql</FullPath>
+          <FullPath>07_create_utilidades.sql</FullPath>
         </FileNode>
         <FileNode Name="08_create_sp_supermercado.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
@@ -166,17 +166,17 @@
           <AssociatedConnUserName />
           <FullPath>23_exec_sp_nota_credito.sql</FullPath>
         </FileNode>
-        <FileNode Name="24_exec_abm_ventas.sql">
+        <FileNode Name="24_exec_abm_detalle_venta.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
-          <FullPath>24_exec_abm_ventas.sql</FullPath>
+          <FullPath>24_exec_abm_detalle_venta.sql</FullPath>
         </FileNode>
-        <FileNode Name="25_exec_abm_detalle_venta.sql">
+        <FileNode Name="25_exec_abm_ventas.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
-          <FullPath>25_exec_abm_detalle_venta.sql</FullPath>
+          <FullPath>25_exec_abm_ventas.sql</FullPath>
         </FileNode>
         <FileNode Name="26_alter_role_member.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
