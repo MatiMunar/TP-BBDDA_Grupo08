@@ -1,7 +1,0 @@
-IF DB_ID('Com2900G08') IS NULL
-BEGIN
-    CREATE DATABASE Com2900G08;
-END
-ELSE
-	RAISERROR('Ya existe la Base de Datos "Com2900G08"', 16, 1);
-GO
