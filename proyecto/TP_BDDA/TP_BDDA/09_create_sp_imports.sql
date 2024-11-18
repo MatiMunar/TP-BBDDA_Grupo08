@@ -456,9 +456,24 @@ BEGIN
 		SET @filas_insertadas = @@ROWCOUNT;
 		IF @filas_insertadas = 0
 		BEGIN
-			RAISERROR('No hay ventas nuevas para registrar.', 16, 1);
+			RAISERROR('No hay ventas nuevas para insertar.', 16, 1);
 			RETURN;
 		END;
+
+		-- Verificamos si se cargó el supermercado junto con su cuit
+		IF NOT EXISTS (
+            SELECT 1 
+            FROM creacion.supermercado sm
+            WHERE EXISTS (
+                SELECT 1 FROM creacion.supermercado
+            )
+        )
+        BEGIN
+            RAISERROR('No existe el CUIT y nombre del supermercado necesarios en la tabla "supermercado".', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END;
+
         -- Paso 4: Insertamos en detalle_venta evitando duplicados
         INSERT INTO creacion.detalle_venta (id_venta, id_producto, cantidad, precio_unitario, subtotal, numero_factura)
         SELECT 

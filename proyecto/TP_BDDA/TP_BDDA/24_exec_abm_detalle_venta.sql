@@ -20,4 +20,6 @@ EXEC abm_detalle_venta.dar_de_baja @id_dv = 629
 */
 
 /*ACLARACION:
-	El estado actual de la venta está en pendiente, para ello se debe e*/
+	El estado actual de la venta está en pendiente, para ello se debe ejecutar la query 25 
+	(25_exec_abm_ventas.sql), con ella la venta se confirma y pasa a estado pago.
+*/

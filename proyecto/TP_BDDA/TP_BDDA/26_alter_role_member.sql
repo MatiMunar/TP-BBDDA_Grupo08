@@ -1,7 +1,7 @@
 USE Com2900G08;
 GO
 
--- Esta query es para dar rol de 'Supervisor' de manera dinámic
+-- Esta query es para dar rol de 'Supervisor' de manera dinámica a los empleados que tengan ese cargo.
 
 DECLARE @sql NVARCHAR(MAX) = N'';
 
@@ -22,7 +22,17 @@ END
 ELSE
 BEGIN
     -- En caso de que existan los usuarios, les damos el rol dinámicamente
-    SELECT @sql += N'ALTER ROLE Supervisor ADD MEMBER [' + nombre + N']; '
+    SELECT @sql += N'
+        IF NOT EXISTS (
+            SELECT 1
+            FROM sys.database_role_members rm
+            INNER JOIN sys.database_principals r ON rm.role_principal_id = r.principal_id
+            INNER JOIN sys.database_principals u ON rm.member_principal_id = u.principal_id
+            WHERE r.name = ''Supervisor'' AND u.name = ''' + nombre + N'''
+        )
+        BEGIN
+            ALTER ROLE Supervisor ADD MEMBER [' + nombre + N'];
+        END;'
     FROM creacion.empleado
     WHERE cargo = 'Supervisor';
 

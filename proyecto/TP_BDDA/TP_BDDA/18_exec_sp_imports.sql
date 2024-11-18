@@ -11,5 +11,3 @@ EXEC insertar.datos_productos_importados @rutaArchivo = 'C:\Users\ivanr\Desktop\
 EXEC insertar.actualizar_categoria
 
 EXEC insertar.ventas_registradas @rutaArchivo = 'C:\Users\ivanr\Desktop\TP_integrador_Archivos\Ventas_registradas.csv';
-
-select * from creacion.pago

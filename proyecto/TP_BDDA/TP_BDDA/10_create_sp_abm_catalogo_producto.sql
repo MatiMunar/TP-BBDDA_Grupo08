@@ -1,4 +1,4 @@
-6USE Com2900G08
+USE Com2900G08
 GO
 
 DROP PROCEDURE IF EXISTS abm_catalogo_producto.dar_alta

@@ -184,29 +184,35 @@
           <AssociatedConnUserName />
           <FullPath>26_alter_role_member.sql</FullPath>
         </FileNode>
-        <FileNode Name="27_backup_semanal.sql">
+        <FileNode Name="27_create_reportes.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
-          <FullPath>27_backup_semanal.sql</FullPath>
+          <FullPath>27_create_reportes.sql</FullPath>
         </FileNode>
-        <FileNode Name="28_backup_diario.sql">
+        <FileNode Name="28_exec_sp_reportes.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
-          <FullPath>28_backup_diario.sql</FullPath>
+          <FullPath>28_exec_sp_reportes.sql</FullPath>
         </FileNode>
-        <FileNode Name="29_backup_hora.sql">
+        <FileNode Name="29_backup_semanal.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
-          <FullPath>29_backup_hora.sql</FullPath>
+          <FullPath>29_backup_semanal.sql</FullPath>
         </FileNode>
-        <FileNode Name="30_create_reportes.sql">
+        <FileNode Name="30_backup_diario.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
           <AssociatedConnUserName />
-          <FullPath>30_create_reportes.sql</FullPath>
+          <FullPath>30_backup_diario.sql</FullPath>
+        </FileNode>
+        <FileNode Name="31_backup_hora.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
+          <AssociatedConnUserName />
+          <FullPath>31_backup_hora.sql</FullPath>
         </FileNode>
         <FileNode Name="drop_database.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
