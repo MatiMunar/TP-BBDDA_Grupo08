@@ -214,18 +214,6 @@
           <AssociatedConnUserName />
           <FullPath>31_backup_hora.sql</FullPath>
         </FileNode>
-        <FileNode Name="drop_database.sql">
-          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
-          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
-          <AssociatedConnUserName />
-          <FullPath>drop_database.sql</FullPath>
-        </FileNode>
-        <FileNode Name="drop_table.sql">
-          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:IVAN\SQLEXPRESS:True</AssociatedConnectionMoniker>
-          <AssociatedConnSrvName>IVAN\SQLEXPRESS</AssociatedConnSrvName>
-          <AssociatedConnUserName />
-          <FullPath>drop_table.sql</FullPath>
-        </FileNode>
       </Items>
     </LogicalFolder>
     <LogicalFolder Name="Miscellaneous" Type="3" Sorted="true">
