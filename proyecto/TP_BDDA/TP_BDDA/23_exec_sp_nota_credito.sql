@@ -1,4 +1,5 @@
 USE Com2900G08
+GO
 
 EXEC insertar.generar_nota_credito
     @numero_factura = '750-67-8428',

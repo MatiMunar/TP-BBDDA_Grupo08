@@ -10,7 +10,8 @@ BEGIN
         sucursal CHAR(50) NOT NULL,
         direccion CHAR(100) NOT NULL,
         horario CHAR(50) NOT NULL,
-        telefono CHAR(9) NOT NULL
+        telefono CHAR(9) NOT NULL,
+		CONSTRAINT chk_telefono_formato CHECK (telefono LIKE '[0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]' OR telefono LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]')
     );
 END
 ELSE
